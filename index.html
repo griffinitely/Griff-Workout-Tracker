@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vigilante Athlete - Arrow Transformation Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Apex Athlete - Progression Portal</title>
   
-  <!-- Tailwind CSS for modern responsive utility styling -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js for beautiful, responsive progress charts -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Lucide Icons for premium-quality UI icons -->
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <script>
@@ -18,12 +18,12 @@
         extend: {
           colors: {
             brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981', /* Hooded vigilante green */
-              600: '#059669',
-              700: '#047857',
-              950: '#022c22',
+              50: 'var(--color-brand-50)',
+              100: 'var(--color-brand-100)',
+              500: 'var(--color-brand-500)', 
+              600: 'var(--color-brand-600)',
+              700: 'var(--color-brand-700)',
+              950: 'var(--color-brand-950)',
             }
           }
         }
@@ -32,134 +32,206 @@
   </script>
 
   <style>
-    /* Premium scrollbars */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+    /* Dynamic Theme CSS Variables */
+    :root {
+      --color-brand-50: #f0fdf4;
+      --color-brand-100: #dcfce7;
+      --color-brand-500: #10b981;
+      --color-brand-600: #059669;
+      --color-brand-700: #047857;
+      --color-brand-950: #022c22;
+      --accent-glow: rgba(16, 185, 129, 0.15);
     }
-    ::-webkit-scrollbar-track {
-      background: #09090b;
+
+    body.theme-goku {
+      --color-brand-50: #fff7ed;
+      --color-brand-100: #ffedd5;
+      --color-brand-500: #f97316;
+      --color-brand-600: #ea580c;
+      --color-brand-700: #c2410c;
+      --color-brand-950: #431407;
+      --accent-glow: rgba(249, 115, 22, 0.15);
     }
-    ::-webkit-scrollbar-thumb {
-      background: #27272a;
-      border-radius: 3px;
+
+    body.theme-tanjiro {
+      --color-brand-50: #f0fdfa;
+      --color-brand-100: #ccfbf1;
+      --color-brand-500: #0d9488;
+      --color-brand-600: #0f766e;
+      --color-brand-700: #115e59;
+      --color-brand-950: #042f2e;
+      --accent-glow: rgba(13, 148, 136, 0.15);
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #10b981;
+
+    body.theme-neutral {
+      --color-brand-50: #f0f9ff;
+      --color-brand-100: #e0f2fe;
+      --color-brand-500: #3b82f6;
+      --color-brand-600: #2563eb;
+      --color-brand-700: #1d4ed8;
+      --color-brand-950: #172554;
+      --accent-glow: rgba(59, 130, 246, 0.15);
     }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #09090b; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-brand-500); }
+    
     .glass-panel {
-      background: rgba(18, 18, 22, 0.7);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(39, 39, 42, 0.8);
+      background: rgba(18, 18, 22, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(39, 39, 42, 0.8);
+    }
+    .accent-shadow { box-shadow: 0 10px 30px -10px var(--accent-glow); }
+    
+    /* Clean text inputs for exercise swapping */
+    .editable-exercise {
+      background: transparent;
+      border-bottom: 1px dashed rgba(255,255,255,0.3);
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .editable-exercise:focus {
+      border-bottom: 1px solid var(--color-brand-500);
+      color: var(--color-brand-500);
     }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen font-sans flex flex-col selection:bg-brand-600 selection:text-white">
+<body class="bg-zinc-950 text-zinc-100 font-sans selection:bg-brand-600 selection:text-white transition-colors duration-350 min-h-screen flex flex-col">
 
-  <!-- TOP HEADER -->
-  <header class="glass-panel sticky top-0 z-50 px-4 py-3 border-b border-zinc-800">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="bg-brand-950 border border-brand-500/30 p-2 rounded-lg text-brand-400">
-          <i data-lucide="shield" class="w-6 h-6"></i>
+  <!-- TOP HEADER & NAVIGATION (Fixed at Top) -->
+  <header class="glass-panel sticky top-0 z-50 shadow-lg shadow-black/50">
+    <!-- Top Row: Logo & Date Picker -->
+    <div class="px-4 py-3 border-b border-zinc-800">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="bg-brand-950 border border-brand-500/30 p-1.5 sm:p-2 rounded-lg text-brand-500 transition-all duration-300">
+            <i data-lucide="award" id="header-icon" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+          </div>
+          <div>
+            <h1 class="font-black text-sm sm:text-lg tracking-wider text-white uppercase flex items-center gap-1.5">
+              Apex <span class="text-brand-500 transition-colors duration-300">Athlete</span>
+            </h1>
+          </div>
         </div>
-        <div>
-          <h1 class="font-black text-lg tracking-wider text-white uppercase flex items-center gap-2">
-            Vigilante <span class="text-brand-500">Athlete</span>
-          </h1>
-          <p class="text-xs text-zinc-400 font-medium">Arrow Physical Development Protocol</p>
+        
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] sm:text-xs font-bold text-zinc-500 uppercase">Date:</span>
+          <input type="date" id="global-date-picker" onchange="changeActiveDate(this.value)" class="bg-zinc-900 border border-zinc-700 rounded-md p-1 sm:p-1.5 text-xs sm:text-sm text-white font-bold focus:outline-none focus:border-brand-500 transition-colors">
         </div>
-      </div>
-      
-      <!-- NAVIGATION - Mobile Responsive Tabs -->
-      <nav class="hidden md:flex items-center gap-2">
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all bg-brand-600 text-white shadow-lg shadow-brand-500/10">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
-        </button>
-        <button onclick="switchTab('workout')" id="nav-workout" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all text-zinc-400 hover:text-white hover:bg-zinc-900">
-          <i data-lucide="dumbbell" class="w-4 h-4"></i> Log Workout
-        </button>
-        <button onclick="switchTab('nutrition')" id="nav-nutrition" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all text-zinc-400 hover:text-white hover:bg-zinc-900">
-          <i data-lucide="apple" class="w-4 h-4"></i> Nutrition
-        </button>
-        <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all text-zinc-400 hover:text-white hover:bg-zinc-900">
-          <i data-lucide="trending-up" class="w-4 h-4"></i> Analytics
-        </button>
-        <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all text-zinc-400 hover:text-white hover:bg-zinc-900">
-          <i data-lucide="settings" class="w-4 h-4"></i> Settings
-        </button>
-      </nav>
-
-      <!-- Active Day Indicator -->
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center rounded-md bg-brand-400/10 px-2.5 py-1 text-xs font-semibold text-brand-400 ring-1 ring-inset ring-brand-400/20">
-          <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1"></i>
-          <span id="current-date-display">Today</span>
-        </span>
       </div>
     </div>
+
+    <!-- Bottom Row: Unified Navigation -->
+    <nav class="max-w-7xl mx-auto px-2 py-2 flex items-center justify-between sm:justify-start sm:gap-2 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex-1 sm:flex-none px-3 py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex flex-col sm:flex-row items-center gap-1 sm:gap-2 transition-all bg-brand-600 text-white shadow-lg shadow-brand-500/10">
+        <i data-lucide="layout-dashboard" class="w-4 h-4 sm:w-4 sm:h-4"></i> <span>Home</span>
+      </button>
+      <button onclick="switchTab('workout')" id="nav-workout" class="nav-btn flex-1 sm:flex-none px-3 py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex flex-col sm:flex-row items-center gap-1 sm:gap-2 transition-all text-zinc-400 hover:text-white hover:bg-zinc-900">
+        <i data-lucide="dumbbell" class="w-4 h-4 sm:w-4 sm:h-4"></i> <span>Training</span>
+      </button>
+      <button onclick="switchTab('nutrition')" id="nav-nutrition" class="nav-btn flex-1 sm:flex-none px-3 py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex flex-col sm:flex-row items-center gap-1 sm:gap-2 transition-all text-zinc-400 hover:text-white hover:bg-zinc-900">
+        <i data-lucide="apple" class="w-4 h-4 sm:w-4 sm:h-4"></i> <span>Macros</span>
+      </button>
+      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn flex-1 sm:flex-none px-3 py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex flex-col sm:flex-row items-center gap-1 sm:gap-2 transition-all text-zinc-400 hover:text-white hover:bg-zinc-900">
+        <i data-lucide="trending-up" class="w-4 h-4 sm:w-4 sm:h-4"></i> <span>Charts</span>
+      </button>
+      <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn flex-1 sm:flex-none px-3 py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex flex-col sm:flex-row items-center gap-1 sm:gap-2 transition-all text-zinc-400 hover:text-white hover:bg-zinc-900">
+        <i data-lucide="settings" class="w-4 h-4 sm:w-4 sm:h-4"></i> <span>Setup</span>
+      </button>
+    </nav>
   </header>
 
   <!-- MAIN APP CONTAINER -->
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 md:py-8">
     
-    <!-- Toast Notification Box -->
-    <div id="toast-box" class="fixed bottom-20 md:bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 ease-out flex items-center gap-3 bg-zinc-900 border-l-4 border-brand-500 text-zinc-100 px-5 py-3 rounded shadow-2xl max-w-md">
-      <i data-lucide="check-circle" class="text-brand-400 w-5 h-5 flex-shrink-0"></i>
+    <!-- Custom Notification system -->
+    <div id="toast-box" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 ease-out flex items-center gap-3 bg-zinc-900 border-l-4 border-brand-500 text-zinc-100 px-5 py-3 rounded shadow-2xl max-w-md">
+      <i data-lucide="check-circle" class="text-brand-500 w-5 h-5 flex-shrink-0"></i>
       <p id="toast-message" class="text-sm font-medium"></p>
     </div>
 
     <!-- TAB 1: DASHBOARD -->
     <section id="tab-dashboard" class="tab-content block space-y-6">
       
-      <!-- Hero Banner Quote -->
-      <div class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950 p-6 md:p-8">
-        <div class="absolute right-0 top-0 h-full w-1/3 opacity-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-        <div class="relative z-10 max-w-2xl">
-          <span class="text-brand-400 font-bold uppercase tracking-widest text-xs">Vigilante Protocol Alpha</span>
-          <h2 class="text-2xl md:text-4xl font-black mt-2 leading-tight">YOU HAVE NOT FAILED <br class="hidden sm:inline">THIS BODY.</h2>
-          <p class="text-zinc-400 text-sm md:text-base mt-2">
-            Consistency trumps genetics. Fuel the muscle, progressive overload the heavy plates, and push past the physical thresholds. Track your path to a lean, muscular 185–190 lbs.
-          </p>
+      <!-- Hero Banner Theme Selector & Quote -->
+      <div class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950 p-6 md:p-8 accent-shadow">
+        <div class="absolute right-0 top-0 h-full w-1/3 opacity-5 bg-[radial-gradient(var(--color-brand-500)_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
+          <div class="max-w-2xl">
+            <span class="text-brand-500 font-extrabold uppercase tracking-widest text-xs transition-colors duration-300" id="hero-tagline">Vigilante Protocol Alpha</span>
+            <h2 class="text-2xl md:text-3xl font-black mt-2 leading-tight text-white" id="hero-quote">YOU HAVE NOT FAILED THIS BODY.</h2>
+            <p class="text-zinc-400 text-sm mt-2" id="hero-description">
+              Every rep is an arrow shot with absolute precision. Sculpt a modern physical weapon through calculated progression and relentless drive.
+            </p>
+          </div>
+          
+          <!-- Character Theme Swapper -->
+          <div class="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/80 w-full xl:w-auto">
+            <span class="block text-[10px] text-zinc-500 font-black uppercase tracking-wider mb-2">Configure Focus Archetype</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              <button onclick="setArchetypeTheme('arrow')" id="theme-btn-arrow" class="px-3 py-2 rounded-lg text-xs font-bold transition-all border border-zinc-800 hover:border-zinc-700 flex flex-col items-center gap-1">
+                <i data-lucide="target" class="w-4 h-4"></i>
+                <span>Vigilante</span>
+              </button>
+              <button onclick="setArchetypeTheme('goku')" id="theme-btn-goku" class="px-3 py-2 rounded-lg text-xs font-bold transition-all border border-zinc-800 hover:border-zinc-700 flex flex-col items-center gap-1">
+                <i data-lucide="zap" class="w-4 h-4"></i>
+                <span>Saiyan</span>
+              </button>
+              <button onclick="setArchetypeTheme('tanjiro')" id="theme-btn-tanjiro" class="px-3 py-2 rounded-lg text-xs font-bold transition-all border border-zinc-800 hover:border-zinc-700 flex flex-col items-center gap-1">
+                <i data-lucide="swords" class="w-4 h-4"></i>
+                <span>Demon Slayer</span>
+              </button>
+              <button onclick="setArchetypeTheme('neutral')" id="theme-btn-neutral" class="px-3 py-2 rounded-lg text-xs font-bold transition-all border border-zinc-800 hover:border-zinc-700 flex flex-col items-center gap-1">
+                <i data-lucide="activity" class="w-4 h-4"></i>
+                <span>Neutral</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Quick Metrics Ribbon -->
+      <!-- Quick Metrics Grid -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="glass-panel rounded-xl p-4 flex items-center justify-between">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-xl p-4 flex items-center justify-between">
           <div>
-            <p class="text-xs text-zinc-400 uppercase font-semibold">Current Weight</p>
-            <h3 class="text-2xl font-bold mt-1" id="dash-weight-display">170.0 lbs</h3>
+            <p class="text-xs text-zinc-400 uppercase font-bold">Scale Weight</p>
+            <h3 class="text-2xl font-black mt-1" id="dash-weight-display">170.0 lbs</h3>
           </div>
-          <div class="bg-zinc-800/50 p-3 rounded-lg text-zinc-400">
-            <i data-lucide="scale" class="w-6 h-6"></i>
+          <div class="bg-zinc-950 p-2.5 rounded-lg text-zinc-400">
+            <i data-lucide="scale" class="w-5 h-5"></i>
           </div>
         </div>
-        <div class="glass-panel rounded-xl p-4 flex items-center justify-between">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-xl p-4 flex items-center justify-between">
           <div>
-            <p class="text-xs text-zinc-400 uppercase font-semibold">Total Workouts</p>
-            <h3 class="text-2xl font-bold mt-1" id="dash-workouts-count">0</h3>
+            <p class="text-xs text-zinc-400 uppercase font-bold">Lifting Days</p>
+            <h3 class="text-2xl font-black mt-1" id="dash-workouts-count">0</h3>
           </div>
-          <div class="bg-zinc-800/50 p-3 rounded-lg text-brand-400">
-            <i data-lucide="flame" class="w-6 h-6"></i>
+          <div class="bg-brand-950 p-2.5 rounded-lg text-brand-500 transition-colors duration-300">
+            <i data-lucide="dumbbell" class="w-5 h-5"></i>
           </div>
         </div>
-        <div class="glass-panel rounded-xl p-4 flex items-center justify-between">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-xl p-4 flex items-center justify-between">
           <div>
-            <p class="text-xs text-zinc-400 uppercase font-semibold">Protein Today</p>
-            <h3 class="text-2xl font-bold mt-1" id="dash-protein-progress">0 / 170g</h3>
+            <p class="text-xs text-zinc-400 uppercase font-bold">Garmin Sleep</p>
+            <h3 class="text-2xl font-black mt-1 text-indigo-400" id="dash-sleep-display">0</h3>
           </div>
-          <div class="bg-zinc-800/50 p-3 rounded-lg text-orange-400">
-            <i data-lucide="zap" class="w-6 h-6"></i>
+          <div class="bg-indigo-950 p-2.5 rounded-lg text-indigo-400">
+            <i data-lucide="moon" class="w-5 h-5"></i>
           </div>
         </div>
-        <div class="glass-panel rounded-xl p-4 flex items-center justify-between">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-xl p-4 flex items-center justify-between">
           <div>
-            <p class="text-xs text-zinc-400 uppercase font-semibold">Water Intake</p>
-            <h3 class="text-2xl font-bold mt-1" id="dash-water-display">0 / 12 cups</h3>
+            <p class="text-xs text-zinc-400 uppercase font-bold">Running Logs</p>
+            <h3 class="text-2xl font-black mt-1 text-blue-400" id="dash-runs-count">0</h3>
           </div>
-          <div class="bg-zinc-800/50 p-3 rounded-lg text-blue-400">
-            <i data-lucide="droplet" class="w-6 h-6"></i>
+          <div class="bg-blue-950 p-2.5 rounded-lg text-blue-400">
+            <i data-lucide="footprints" class="w-5 h-5"></i>
           </div>
         </div>
       </div>
@@ -169,115 +241,121 @@
         
         <!-- Today's Action Center & Quick Logs -->
         <div class="lg:col-span-2 space-y-6">
-          <div class="glass-panel rounded-2xl p-6">
+          <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
             <h3 class="text-lg font-bold flex items-center gap-2 mb-4">
-              <i data-lucide="check-square" class="text-brand-400 w-5 h-5"></i> Daily Vigilante Checklist
+              <i data-lucide="check-square" class="text-brand-500 w-5 h-5 transition-colors duration-300"></i> Daily Habit Matrix
             </h3>
             <div class="space-y-3">
-              <label class="flex items-center justify-between p-3 rounded-lg bg-zinc-900/60 border border-zinc-800 cursor-pointer hover:bg-zinc-900/80 transition-all">
+              
+              <!-- Sleep Logger (Updated) -->
+              <div class="flex items-center justify-between p-3 rounded-lg bg-zinc-950/60 border border-zinc-800">
+                <span class="flex items-center gap-3">
+                  <i data-lucide="moon" class="w-5 h-5 text-indigo-500"></i>
+                  <span class="text-sm font-semibold">Garmin Sleep Score</span>
+                </span>
+                <div class="flex items-center gap-2">
+                  <input type="number" id="input-log-sleep" step="1" max="100" placeholder="85" onchange="logSleep()" class="w-16 bg-zinc-900 border border-zinc-700 rounded py-1 px-2 text-white font-bold text-center focus:border-brand-500 outline-none">
+                  <span class="text-xs text-zinc-500 font-bold">pts</span>
+                </div>
+              </div>
+
+              <label class="flex items-center justify-between p-3 rounded-lg bg-zinc-950/60 border border-zinc-800 cursor-pointer hover:bg-zinc-900 transition-all">
                 <span class="flex items-center gap-3">
                   <input type="checkbox" id="chk-creatine" onchange="toggleChecklist('creatine')" class="rounded border-zinc-700 text-brand-500 focus:ring-brand-500 h-5 w-5 bg-zinc-950">
-                  <span class="text-sm font-semibold">Daily Creatine Monohydrate (5g)</span>
+                  <span class="text-sm font-semibold">Creatine Monohydrate (5g)</span>
                 </span>
-                <span class="text-xs text-zinc-500">Hydrate muscles</span>
+                <span class="text-xs text-zinc-500">Hydration & Strength</span>
               </label>
 
-              <label class="flex items-center justify-between p-3 rounded-lg bg-zinc-900/60 border border-zinc-800 cursor-pointer hover:bg-zinc-900/80 transition-all">
+              <label class="flex items-center justify-between p-3 rounded-lg bg-zinc-950/60 border border-zinc-800 cursor-pointer hover:bg-zinc-900 transition-all">
                 <span class="flex items-center gap-3">
                   <input type="checkbox" id="chk-vitamins" onchange="toggleChecklist('vitamins')" class="rounded border-zinc-700 text-brand-500 focus:ring-brand-500 h-5 w-5 bg-zinc-950">
-                  <span class="text-sm font-semibold">Core Vitamin Protocols (D3 & Omega-3)</span>
+                  <span class="text-sm font-semibold">Core Vitamin Protocols</span>
                 </span>
-                <span class="text-xs text-zinc-500">Joints & Hormones</span>
-              </label>
-
-              <label class="flex items-center justify-between p-3 rounded-lg bg-zinc-900/60 border border-zinc-800 cursor-pointer hover:bg-zinc-900/80 transition-all">
-                <span class="flex items-center gap-3">
-                  <input type="checkbox" id="chk-protein-target" disabled class="rounded border-zinc-700 text-brand-500 focus:ring-brand-500 h-5 w-5 bg-zinc-950">
-                  <span class="text-sm font-semibold">Meet Daily Protein Threshold (170g)</span>
-                </span>
-                <span class="text-xs text-brand-400 font-bold" id="chk-protein-progress-text">0 / 170g</span>
-              </label>
-
-              <label class="flex items-center justify-between p-3 rounded-lg bg-zinc-900/60 border border-zinc-800 cursor-pointer hover:bg-zinc-900/80 transition-all">
-                <span class="flex items-center gap-3">
-                  <input type="checkbox" id="chk-workout" disabled class="rounded border-zinc-700 text-brand-500 focus:ring-brand-500 h-5 w-5 bg-zinc-950">
-                  <span class="text-sm font-semibold">Complete Today's Heavy Lifting split</span>
-                </span>
-                <span class="text-xs text-zinc-500">Resistance Training</span>
+                <span class="text-xs text-zinc-500">Joints & Performance</span>
               </label>
             </div>
           </div>
 
-          <!-- Quick Weight Logger -->
-          <div class="glass-panel rounded-2xl p-6">
+          <!-- Quick Scale weight log -->
+          <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
             <h3 class="text-lg font-bold flex items-center gap-2 mb-4">
-              <i data-lucide="scale" class="text-zinc-300 w-5 h-5"></i> Log Current Body Weight
+              <i data-lucide="scale" class="text-zinc-300 w-5 h-5"></i> Record Morning Body Weight
             </h3>
             <div class="flex flex-col sm:flex-row gap-4 items-end">
-              <div class="flex-grow">
+              <div class="flex-grow w-full">
                 <label class="block text-xs text-zinc-400 font-semibold uppercase mb-1">Scale Weight (lbs)</label>
                 <div class="relative">
-                  <input type="number" id="input-log-weight" step="0.1" placeholder="170.0" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-4 text-white focus:outline-none focus:border-brand-500 font-bold">
+                  <input type="number" id="input-log-weight" step="0.1" placeholder="170.0" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-4 text-white focus:outline-none focus:border-brand-500 font-bold">
                   <span class="absolute right-4 top-2.5 text-zinc-500 font-bold text-sm">lbs</span>
                 </div>
               </div>
               <button onclick="logBodyWeight()" class="w-full sm:w-auto bg-brand-600 hover:bg-brand-500 active:scale-95 text-white font-bold px-6 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2">
-                <i data-lucide="plus" class="w-5 h-5"></i> Record Weight
+                <i data-lucide="plus" class="w-5 h-5"></i> Commit Weight
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Sidebar: Goal progression & quick links -->
+        <!-- Sidebar Details -->
         <div class="space-y-6">
-          <div class="glass-panel rounded-2xl p-6 bg-gradient-to-b from-zinc-900/40 to-zinc-950">
-            <h3 class="text-lg font-bold flex items-center gap-2 mb-4">
-              <i data-lucide="target" class="text-brand-500 w-5 h-5"></i> Target Status
-            </h3>
+          
+          <!-- Advanced Macro Status -->
+          <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-400 mb-3">Today's Macro Progress</h3>
+            <div id="dash-nutrition-type-badge" class="mb-4"></div>
             
+            <div class="space-y-4">
+              <!-- Protein -->
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-zinc-400">Protein</span>
+                  <span class="text-brand-500" id="dash-prog-prot">0 / 170g</span>
+                </div>
+                <div class="w-full bg-zinc-800 rounded-full h-1.5"><div id="bar-prot" class="bg-brand-500 h-full rounded-full transition-all" style="width: 0%"></div></div>
+              </div>
+              <!-- Carbs -->
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-zinc-400">Carbs</span>
+                  <span class="text-blue-400" id="dash-prog-carb">0 / 335g</span>
+                </div>
+                <div class="w-full bg-zinc-800 rounded-full h-1.5"><div id="bar-carb" class="bg-blue-400 h-full rounded-full transition-all" style="width: 0%"></div></div>
+              </div>
+              <!-- Fats -->
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-zinc-400">Fats</span>
+                  <span class="text-yellow-500" id="dash-prog-fat">0 / 75g</span>
+                </div>
+                <div class="w-full bg-zinc-800 rounded-full h-1.5"><div id="bar-fat" class="bg-yellow-500 h-full rounded-full transition-all" style="width: 0%"></div></div>
+              </div>
+              <!-- Calories -->
+              <div class="pt-2 border-t border-zinc-800 flex justify-between text-xs">
+                <span class="text-zinc-400 uppercase font-bold">Total Energy:</span>
+                <span class="font-black text-white" id="dash-prog-cal">0 / 2700 kcal</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gradient-to-b from-zinc-900/60 to-zinc-950 border border-zinc-800 rounded-2xl p-6">
+            <h3 class="text-lg font-bold flex items-center gap-2 mb-4">
+              <i data-lucide="target" class="text-brand-500 w-5 h-5 transition-colors duration-300"></i> Target Mass Status
+            </h3>
             <div class="space-y-4">
               <div>
                 <div class="flex justify-between text-xs text-zinc-400 font-bold mb-1">
-                  <span>TRANSFORMATION WEIGHT</span>
-                  <span class="text-white font-black"><span id="metric-current-weight">170</span> / 185 lbs</span>
+                  <span>TRANSFORMATION</span>
+                  <span class="text-white font-black"><span id="metric-current-weight">170</span> / <span id="metric-target-weight">185</span> lbs</span>
                 </div>
                 <div class="w-full bg-zinc-800 rounded-full h-2.5 overflow-hidden">
-                  <div id="bar-weight-progress" class="bg-gradient-to-r from-brand-600 to-emerald-400 h-full rounded-full" style="width: 20%"></div>
+                  <div id="bar-weight-progress" class="bg-gradient-to-r from-brand-600 to-emerald-400 h-full rounded-full transition-all" style="width: 20%"></div>
                 </div>
               </div>
-
-              <div>
-                <div class="flex justify-between text-xs text-zinc-400 font-bold mb-1">
-                  <span>MUSCLE RECOMP (Lean Mass Focus)</span>
-                  <span class="text-brand-400">ON TRACK</span>
-                </div>
-                <div class="p-3 bg-zinc-950 rounded-lg border border-zinc-900 text-xs text-zinc-400">
-                  By keeping daily protein steady at 170g while gradually increasing dumbbell working loads, you are actively burning off the minor stomach fat while reinforcing abdominal density.
-                </div>
-              </div>
-
               <div class="border-t border-zinc-800 pt-4 mt-2">
-                <button onclick="switchTab('workout')" class="w-full py-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2">
-                  <i data-lucide="play-circle" class="w-4 h-4 text-brand-400"></i> Begin Today's Session
+                <button onclick="switchTab('workout')" class="w-full py-2.5 bg-zinc-950 border border-zinc-800 hover:bg-zinc-800 text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                  <i data-lucide="play-circle" class="w-4 h-4 text-brand-500"></i> Access Training Deck
                 </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Quick Action Stats -->
-          <div class="glass-panel rounded-2xl p-6">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-400 mb-3">Today's Macros Matrix</h3>
-            <div id="dash-nutrition-type-badge" class="mb-3">
-              <!-- Dynamically populated nutrition mode -->
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs">
-                <span class="text-zinc-400">Calories Budget:</span>
-                <span class="font-bold text-white" id="dash-cal-rem">2,700 kcal remaining</span>
-              </div>
-              <div class="flex justify-between text-xs">
-                <span class="text-zinc-400">Protein target:</span>
-                <span class="font-bold text-white" id="dash-prot-rem">170g remaining</span>
               </div>
             </div>
           </div>
@@ -287,182 +365,137 @@
 
     </section>
 
-    <!-- TAB 2: WORKOUT LOGGER -->
+    <!-- TAB 2: WORKOUT & CARDIO LOG -->
     <section id="tab-workout" class="tab-content hidden space-y-6">
       
-      <!-- Selection of Split Day -->
-      <div class="glass-panel rounded-2xl p-6">
-        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-          <i data-lucide="dumbbell" class="text-brand-500"></i> Choose Split Workout Protocol
-        </h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <button onclick="loadWorkoutConfig('upper_a')" id="btn-split-upper_a" class="split-select-btn p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/30 text-left transition-all">
-            <span class="block text-xs text-brand-400 font-extrabold uppercase mb-1">Monday / split A</span>
-            <span class="font-bold text-sm block text-white">Upper Body A</span>
-            <span class="text-xs text-zinc-400 mt-1 block">Chest & Back heavy focus</span>
-          </button>
-          
-          <button onclick="loadWorkoutConfig('lower_a')" id="btn-split-lower_a" class="split-select-btn p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/30 text-left transition-all">
-            <span class="block text-xs text-brand-400 font-extrabold uppercase mb-1">Tuesday / split A</span>
-            <span class="font-bold text-sm block text-white">Lower Body A</span>
-            <span class="text-xs text-zinc-400 mt-1 block">Quad & abdominal density</span>
-          </button>
-
-          <button onclick="loadWorkoutConfig('upper_b')" id="btn-split-upper_b" class="split-select-btn p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/30 text-left transition-all">
-            <span class="block text-xs text-brand-400 font-extrabold uppercase mb-1">Thursday / split B</span>
-            <span class="font-bold text-sm block text-white">Upper Body B</span>
-            <span class="text-xs text-zinc-400 mt-1 block">Shoulder width & Arm size</span>
-          </button>
-
-          <button onclick="loadWorkoutConfig('lower_b')" id="btn-split-lower_b" class="split-select-btn p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/30 text-left transition-all">
-            <span class="block text-xs text-brand-400 font-extrabold uppercase mb-1">Friday / split B</span>
-            <span class="font-bold text-sm block text-white">Lower Body B</span>
-            <span class="text-xs text-zinc-400 mt-1 block">Posterior, lunges & core strength</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Workout Entry Form System -->
-      <div id="workout-form-panel" class="hidden space-y-6">
-        <div class="glass-panel rounded-2xl p-6">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-800 pb-4 mb-6">
-            <div>
-              <span class="inline-flex items-center rounded-md bg-brand-500/10 px-2.5 py-1 text-xs font-bold text-brand-400 ring-1 ring-inset ring-brand-500/20 uppercase" id="workout-tag">
-                ACTIVE WORKOUT
-              </span>
-              <h3 class="text-2xl font-black mt-2 text-white" id="workout-title-active">Upper Body A</h3>
-            </div>
-            
-            <div class="flex items-center gap-3 w-full sm:w-auto">
-              <div class="w-full sm:w-44">
-                <label class="block text-xs text-zinc-500 uppercase font-semibold mb-1">Session Date</label>
-                <input type="date" id="workout-date-input" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-brand-500">
-              </div>
-            </div>
-          </div>
-
-          <!-- Dynamic Generation of Exercise Blocks -->
-          <div id="exercises-container" class="space-y-6">
-            <!-- Dynamic Exercise items loaded here -->
-          </div>
-
-          <!-- Actions -->
-          <div class="border-t border-zinc-800 pt-6 mt-8 flex flex-col sm:flex-row justify-between gap-4">
-            <button onclick="cancelActiveWorkout()" class="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2">
-              <i data-lucide="x" class="w-4 h-4"></i> Discard Session
-            </button>
-            <button onclick="saveActiveWorkout()" class="px-8 py-3 bg-gradient-to-r from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 active:scale-95 text-white font-black rounded-xl text-sm transition-all shadow-lg shadow-brand-500/10 flex items-center justify-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4"></i> Commit Session to Log
-            </button>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- TAB 3: NUTRITION LOG -->
-    <section id="tab-nutrition" class="tab-content hidden space-y-6">
-      
-      <!-- Nutrition Dashboard & Goal Toggle -->
+      <!-- Split selector and Cardio Entry toggles -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <div class="glass-panel rounded-2xl p-6 lg:col-span-1 space-y-6 flex flex-col justify-between">
-          <div>
-            <h3 class="text-xl font-bold flex items-center gap-2 mb-2">
-              <i data-lucide="apple" class="text-brand-400"></i> Nutrition Engine
+        <!-- Left Column: Choose Action -->
+        <div class="lg:col-span-1 space-y-6">
+          <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-4">
+            <h3 class="text-lg font-bold flex items-center gap-2 border-b border-zinc-800 pb-2">
+              <i data-lucide="activity" class="text-brand-500"></i> Logging Center
             </h3>
-            <p class="text-zinc-400 text-sm mb-4">
-              Switching modes adjusts your carbohydrate threshold. On run days, glycogen preservation is priority.
-            </p>
             
-            <div class="bg-zinc-900/60 p-4 rounded-xl border border-zinc-800 space-y-3">
-              <label class="block text-xs text-zinc-400 uppercase font-bold">Today's Protocol</label>
-              <div class="grid grid-cols-2 gap-2">
-                <button onclick="setNutritionDayMode(false)" id="btn-nutri-rest" class="py-2.5 rounded-lg text-xs font-bold transition-all border border-brand-500/30 bg-brand-950 text-brand-400">
-                  ⚡ Rest / Lifting Day
-                </button>
-                <button onclick="setNutritionDayMode(true)" id="btn-nutri-run" class="py-2.5 rounded-lg text-xs font-bold transition-all border border-zinc-800 bg-zinc-900/20 text-zinc-400">
-                  🏃 Running / Long Run Day
-                </button>
-              </div>
+            <div class="space-y-2">
+              <button onclick="showWorkoutLoggerSection()" class="w-full py-3 px-4 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-500/10">
+                <i data-lucide="dumbbell" class="w-4 h-4"></i> Record Weight Lifting
+              </button>
+              <button onclick="showCardioLoggerSection()" class="w-full py-3 px-4 bg-zinc-950 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                <i data-lucide="footprints" class="w-4 h-4 text-blue-400"></i> Record Running Log
+              </button>
             </div>
           </div>
 
-          <div class="pt-4 border-t border-zinc-800 space-y-4">
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="block text-xs text-zinc-400 uppercase font-bold">Target Calories</span>
-                <span class="text-lg font-black text-white" id="nutri-cal-target-label">2,700 kcal</span>
-              </div>
-              <div class="text-right">
-                <span class="block text-xs text-zinc-400 uppercase font-bold">Target Protein</span>
-                <span class="text-lg font-black text-brand-400">170g</span>
-              </div>
+          <!-- Dynamic Active Selector for splits -->
+          <div id="split-selector-card" class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 hidden space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-400">Choose Lifting Protocol</h3>
+            <div class="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto pr-1">
+              <button onclick="loadWorkoutConfig('upper_a')" id="btn-split-upper_a" class="split-select-btn p-3 rounded-lg border border-zinc-800 text-left bg-zinc-950 transition-all hover:bg-zinc-900">
+                <span class="block text-[10px] font-bold text-brand-500 uppercase">Upper Body A</span>
+                <span class="text-xs font-bold text-white">Chest & Back Emphasis</span>
+              </button>
+              <button onclick="loadWorkoutConfig('lower_a')" id="btn-split-lower_a" class="split-select-btn p-3 rounded-lg border border-zinc-800 text-left bg-zinc-950 transition-all hover:bg-zinc-900">
+                <span class="block text-[10px] font-bold text-brand-500 uppercase">Lower Body A</span>
+                <span class="text-xs font-bold text-white">Quad & Ab Density</span>
+              </button>
+              <button onclick="loadWorkoutConfig('upper_b')" id="btn-split-upper_b" class="split-select-btn p-3 rounded-lg border border-zinc-800 text-left bg-zinc-950 transition-all hover:bg-zinc-900">
+                <span class="block text-[10px] font-bold text-brand-500 uppercase">Upper Body B</span>
+                <span class="text-xs font-bold text-white">Shoulders & Arms</span>
+              </button>
+              <button onclick="loadWorkoutConfig('lower_b')" id="btn-split-lower_b" class="split-select-btn p-3 rounded-lg border border-zinc-800 text-left bg-zinc-950 transition-all hover:bg-zinc-900">
+                <span class="block text-[10px] font-bold text-brand-500 uppercase">Lower Body B</span>
+                <span class="text-xs font-bold text-white">Posterior & Lunges</span>
+              </button>
+              <button onclick="loadWorkoutConfig('hypertrophy_a')" id="btn-split-hypertrophy_a" class="split-select-btn p-3 rounded-lg border border-zinc-800 text-left bg-zinc-950 transition-all hover:bg-zinc-900">
+                <span class="block text-[10px] font-bold text-indigo-400 uppercase">Day 5: Hypertrophy</span>
+                <span class="text-xs font-bold text-white">Arms, Core & Weak Points</span>
+              </button>
             </div>
           </div>
         </div>
 
-        <div class="glass-panel rounded-2xl p-6 lg:col-span-2">
-          <h3 class="text-lg font-bold flex items-center gap-2 mb-4">
-            <i data-lucide="plus-circle" class="text-zinc-300"></i> Fast Food & Macro Logger
-          </h3>
-          <div class="space-y-6">
-            <!-- Logging inputs -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Right Column: Form Panel (Dumbbell Weight Lifting) -->
+        <div class="lg:col-span-2 space-y-6">
+          <div id="workout-form-panel" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-800 pb-4 mb-6">
               <div>
-                <label class="block text-xs text-zinc-400 font-semibold uppercase mb-1">Calories Added</label>
-                <input type="number" id="input-add-cal" placeholder="e.g. 350" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2.5 text-white font-bold focus:outline-none focus:border-brand-500">
+                <span class="inline-flex items-center rounded-md bg-brand-500/10 px-2.5 py-1 text-xs font-bold text-brand-500 ring-1 ring-inset ring-brand-500/20 uppercase" id="workout-tag">
+                  ACTIVE RESISTANCE LOG
+                </span>
+                <h3 class="text-xl font-black mt-2 text-white" id="workout-title-active">Upper Body A</h3>
               </div>
-              <div>
-                <label class="block text-xs text-zinc-400 font-semibold uppercase mb-1">Protein Added (g)</label>
-                <input type="number" id="input-add-prot" placeholder="e.g. 30" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2.5 text-white font-bold focus:outline-none focus:border-brand-500">
-              </div>
-              <div class="flex items-end">
-                <button onclick="logCustomMacro()" class="w-full bg-brand-600 hover:bg-brand-500 active:scale-95 text-white font-black py-2.5 rounded-lg transition-all flex items-center justify-center gap-2">
-                  <i data-lucide="plus" class="w-5 h-5"></i> Log Macros
-                </button>
+              <div class="w-full sm:w-auto">
+                <label class="block text-[10px] text-zinc-500 uppercase font-black tracking-wider mb-1">Workout Date</label>
+                <input type="date" id="workout-date-input" class="bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-sm text-white font-bold focus:outline-none focus:border-brand-500">
               </div>
             </div>
 
-            <!-- Quick tap templates -->
-            <div>
-              <h4 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Protein Rapid Taps</h4>
-              <div class="flex flex-wrap gap-2">
-                <button onclick="quickAddMacros(140, 20)" class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 flex items-center gap-1.5 transition-all">
-                  🥤 Whey Shake <span class="text-brand-400">+20g Prot</span>
-                </button>
-                <button onclick="quickAddMacros(320, 30)" class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 flex items-center gap-1.5 transition-all">
-                  🥩 Beef Jerky / Lean Meat <span class="text-brand-400">+30g Prot</span>
-                </button>
-                <button onclick="quickAddMacros(400, 45)" class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 flex items-center gap-1.5 transition-all">
-                  🍗 Chicken Breast Meal <span class="text-brand-400">+45g Prot</span>
-                </button>
-                <button onclick="quickAddMacros(250, 25)" class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 flex items-center gap-1.5 transition-all">
-                  🥚 4 Whole Eggs <span class="text-brand-400">+25g Prot</span>
-                </button>
+            <p class="text-xs text-zinc-400 font-semibold mb-4 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+              <i data-lucide="info" class="inline w-4 h-4 mr-1 text-brand-500"></i>
+              <strong>Total Flexibility:</strong> Tap the exercise name or rep target to edit them. Use the [+] / [-] buttons to add or remove sets instantly.
+            </p>
+
+            <!-- Dynamic Exercises Go Here -->
+            <div id="exercises-container" class="space-y-6"></div>
+
+            <div class="border-t border-zinc-800 pt-6 mt-8 flex flex-col sm:flex-row justify-between gap-4">
+              <button onclick="cancelActiveWorkout()" class="px-6 py-2.5 bg-zinc-950 border border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-white font-bold rounded-xl text-sm transition-all">
+                Clear
+              </button>
+              <button onclick="saveActiveWorkout()" class="px-8 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-black rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Save Lifting Log
+              </button>
+            </div>
+          </div>
+
+          <!-- Running/Cardio Form Panel -->
+          <div id="cardio-form-panel" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-4 mb-2">
+              <div>
+                <span class="inline-flex items-center rounded-md bg-blue-500/10 px-2.5 py-1 text-xs font-bold text-blue-400 ring-1 ring-inset ring-blue-500/20 uppercase">
+                  Endurance Log
+                </span>
+                <h3 class="text-xl font-black mt-2 text-white">Record Run Performance</h3>
+                <p class="text-xs text-zinc-500 mt-1">Saving a run will automatically set today's macros to "Run Day".</p>
+              </div>
+              <div>
+                <label class="block text-[10px] text-zinc-500 uppercase font-black tracking-wider mb-1">Run Date</label>
+                <input type="date" id="cardio-date-input" class="bg-zinc-900 border border-zinc-800 rounded-lg p-2 text-sm text-white font-bold focus:outline-none focus:border-brand-500">
               </div>
             </div>
 
-            <div class="border-t border-zinc-800 pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Water logging -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h4 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Water Hydration (Target: 12 Cups)</h4>
-                <div class="flex items-center gap-3">
-                  <span class="text-2xl font-black text-blue-400" id="nutri-water-label">0 Cups</span>
-                  <div class="flex gap-1.5">
-                    <button onclick="addWater(-1)" class="w-9 h-9 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white transition-all">-</button>
-                    <button onclick="addWater(1)" class="w-9 h-9 bg-blue-900/30 border border-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 hover:bg-blue-900/50 transition-all">+1</button>
-                    <button onclick="addWater(4)" class="px-3 h-9 bg-blue-900/40 border border-blue-500/30 rounded-lg flex items-center justify-center text-blue-300 hover:bg-blue-900/60 transition-all font-bold text-xs">+4 (Bottle)</button>
-                  </div>
+                <label class="block text-xs text-zinc-400 font-bold uppercase mb-1">Distance (Miles)</label>
+                <div class="relative">
+                  <input type="number" id="input-run-distance" step="0.01" placeholder="e.g. 3.1" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white font-bold focus:outline-none focus:border-brand-500">
+                  <span class="absolute right-4 top-3 text-zinc-500 font-bold text-sm">miles</span>
                 </div>
               </div>
-
-              <!-- Quick Reset Daily -->
-              <div class="flex items-end justify-end">
-                <button onclick="resetDailyNutrition()" class="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 hover:underline transition-all">
-                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Clear Today's Daily Macros Log
-                </button>
+              
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs text-zinc-400 font-bold uppercase mb-1">Time (Min)</label>
+                  <input type="number" id="input-run-min" placeholder="e.g. 24" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white font-bold focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                  <label class="block text-xs text-zinc-400 font-bold uppercase mb-1">Time (Sec)</label>
+                  <input type="number" id="input-run-sec" placeholder="e.g. 45" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white font-bold focus:outline-none focus:border-brand-500">
+                </div>
               </div>
+            </div>
+
+            <div>
+              <label class="block text-xs text-zinc-400 font-bold uppercase mb-1">Notes / Terrain</label>
+              <input type="text" id="input-run-notes" placeholder="e.g. Road run, felt strong, hydrated" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:outline-none focus:border-brand-500">
+            </div>
+
+            <div class="pt-4 border-t border-zinc-800 flex justify-end">
+              <button onclick="saveCardioLog()" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Save Run Entry
+              </button>
             </div>
           </div>
         </div>
@@ -471,19 +504,181 @@
 
     </section>
 
-    <!-- TAB 4: ANALYTICS -->
+    <!-- TAB 3: NUTRITION & FOOD DATABASE -->
+    <section id="tab-nutrition" class="tab-content hidden space-y-6">
+      
+      <!-- Nutrition Dashboard -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left: Quick Toggles and Custom add -->
+        <div class="lg:col-span-1 space-y-6">
+          <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-4">
+            <h3 class="text-xl font-bold flex items-center gap-2 mb-2">
+              <i data-lucide="apple" class="text-brand-500 transition-colors duration-300"></i> Nutrition Engine
+            </h3>
+            
+            <div class="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-3">
+              <label class="block text-xs text-zinc-400 uppercase font-bold">Set Today's Macro Goal</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="setNutritionDayMode(false)" id="btn-nutri-rest-page" class="py-2 rounded-lg text-xs font-bold transition-all border border-brand-500/30 bg-brand-950 text-brand-500">
+                  ⚡ Rest/Lift
+                </button>
+                <button onclick="setNutritionDayMode(true)" id="btn-nutri-run-page" class="py-2 rounded-lg text-xs font-bold transition-all border border-zinc-800 bg-zinc-900/20 text-zinc-400">
+                  🏃 Run Day
+                </button>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-zinc-800 space-y-3">
+              <div class="flex justify-between">
+                <span class="text-xs text-zinc-400 uppercase font-bold">Budget (Cals):</span>
+                <span class="text-xs font-black text-white" id="pg-nutri-cal">2,700 kcal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-xs text-zinc-400 uppercase font-bold">Protein:</span>
+                <span class="text-xs font-black text-brand-500" id="pg-nutri-pro">170g</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-xs text-zinc-400 uppercase font-bold">Carbs:</span>
+                <span class="text-xs font-black text-blue-400" id="pg-nutri-carb">335g</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-xs text-zinc-400 uppercase font-bold">Fats:</span>
+                <span class="text-xs font-black text-yellow-500" id="pg-nutri-fat">75g</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick water logger card -->
+          <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-zinc-400">Daily Water Goal (12 Cups)</h4>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-black text-blue-400" id="nutri-water-label">0 Cups</span>
+              <div class="flex gap-1">
+                <button onclick="addWater(-1)" class="w-8 h-8 bg-zinc-950 border border-zinc-800 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white">-</button>
+                <button onclick="addWater(1)" class="w-8 h-8 bg-blue-900/30 border border-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 hover:bg-blue-900/50">+1</button>
+                <button onclick="addWater(4)" class="px-2.5 h-8 bg-blue-900/40 border border-blue-500/30 rounded-lg flex items-center justify-center text-blue-300 hover:bg-blue-900/60 font-bold text-xs">+4</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Searchable food base & Custom Adder -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <h3 class="text-lg font-bold flex items-center gap-2">
+                <i data-lucide="search" class="text-zinc-300"></i> Macro Database & Food Search
+              </h3>
+              <button onclick="toggleCustomFoodModal(true)" class="text-xs bg-zinc-950 border border-zinc-800 hover:bg-zinc-800 px-3 py-1.5 rounded-lg text-brand-500 hover:text-brand-400 font-bold flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Custom Food
+              </button>
+            </div>
+
+            <!-- Search Field -->
+            <div class="relative">
+              <input type="text" id="food-search-input" oninput="searchFoodDatabase(this.value)" placeholder="Search protein, meats, shakes, snacks..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-3 pl-10 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500 font-semibold transition-colors">
+              <i data-lucide="search" class="absolute left-3.5 top-3.5 text-zinc-500 w-5 h-5"></i>
+            </div>
+
+            <!-- Display Results -->
+            <div id="food-results-container" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+              <!-- Dynamically populated search items -->
+            </div>
+
+            <!-- Quick manual macros input -->
+            <div class="border-t border-zinc-800 pt-6">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">Or Record Custom Macros Manually</h4>
+              <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div class="md:col-span-1">
+                  <label class="block text-[10px] text-zinc-500 font-bold uppercase mb-1">Cals</label>
+                  <input type="number" id="input-manual-cal" placeholder="450" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-white font-bold focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="md:col-span-1">
+                  <label class="block text-[10px] text-zinc-500 font-bold uppercase mb-1">Pro (g)</label>
+                  <input type="number" id="input-manual-prot" placeholder="35" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-white font-bold focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="md:col-span-1">
+                  <label class="block text-[10px] text-blue-500 font-bold uppercase mb-1">Carb (g)</label>
+                  <input type="number" id="input-manual-carb" placeholder="40" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-white font-bold focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="md:col-span-1">
+                  <label class="block text-[10px] text-yellow-500 font-bold uppercase mb-1">Fat (g)</label>
+                  <input type="number" id="input-manual-fat" placeholder="12" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-white font-bold focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="col-span-2 md:col-span-1 flex items-end">
+                  <button onclick="logManualMacros()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-2 rounded-lg transition-all text-xs">
+                    Commit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Add Custom Food Modal Overlay -->
+      <div id="custom-food-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+          <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+            <h3 class="text-lg font-bold text-white">Create Custom Food</h3>
+            <button onclick="toggleCustomFoodModal(false)" class="text-zinc-500 hover:text-white">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs text-zinc-400 font-bold uppercase mb-1">Food Name</label>
+              <input type="text" id="cust-food-name" placeholder="e.g. Greek Yogurt Cup" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-brand-500 font-semibold">
+            </div>
+            <div class="grid grid-cols-4 gap-2">
+              <div>
+                <label class="block text-[10px] text-zinc-400 font-bold uppercase mb-1">Cals</label>
+                <input type="number" id="cust-food-cal" placeholder="130" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-white focus:outline-none focus:border-brand-500 font-bold">
+              </div>
+              <div>
+                <label class="block text-[10px] text-brand-400 font-bold uppercase mb-1">Pro (g)</label>
+                <input type="number" id="cust-food-prot" placeholder="15" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-white focus:outline-none focus:border-brand-500 font-bold">
+              </div>
+              <div>
+                <label class="block text-[10px] text-blue-400 font-bold uppercase mb-1">Carb (g)</label>
+                <input type="number" id="cust-food-carb" placeholder="10" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-white focus:outline-none focus:border-brand-500 font-bold">
+              </div>
+              <div>
+                <label class="block text-[10px] text-yellow-500 font-bold uppercase mb-1">Fat (g)</label>
+                <input type="number" id="cust-food-fat" placeholder="2" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-white focus:outline-none focus:border-brand-500 font-bold">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs text-zinc-400 font-bold uppercase mb-1">Portion Unit</label>
+              <input type="text" id="cust-food-portion" placeholder="e.g. 150g container" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-brand-500">
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-zinc-800 flex gap-3 justify-end">
+            <button onclick="toggleCustomFoodModal(false)" class="px-4 py-2 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 rounded-lg text-sm">Cancel</button>
+            <button onclick="saveCustomFoodToDB()" class="px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg text-sm transition-all">Save Food</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 4: ANALYTICS & HISTORICAL DATABASE -->
     <section id="tab-analytics" class="tab-content hidden space-y-6">
       
       <!-- Chart Dashboard -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- Weight Progress Line Graph -->
-        <div class="glass-panel rounded-2xl p-6">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold flex items-center gap-2">
-              <i data-lucide="trending-up" class="text-brand-500 w-5 h-5"></i> Scale Weight Trend (lbs)
+              <i data-lucide="trending-up" class="text-brand-500 w-5 h-5 transition-colors duration-300"></i> Scale Weight Trend (lbs)
             </h3>
-            <span class="text-xs text-zinc-400">Aiming for 185-190 lbs lean</span>
+            <span class="text-xs text-zinc-400 font-bold">Target Range: 185-190 lbs</span>
           </div>
           <div class="h-64 relative">
             <canvas id="weightChart"></canvas>
@@ -491,12 +686,12 @@
         </div>
 
         <!-- DB Bench estimated 1RM Graph -->
-        <div class="glass-panel rounded-2xl p-6">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold flex items-center gap-2">
-              <i data-lucide="zap" class="text-orange-400 w-5 h-5"></i> Estimated Dumbbell Bench 1RM
+              <i data-lucide="zap" class="text-orange-400 w-5 h-5"></i> Est. Dumbbell Bench 1RM
             </h3>
-            <span class="text-xs text-zinc-400">Progressive Strength Overload</span>
+            <span class="text-xs text-zinc-400 font-bold">Progressive Hypertrophy</span>
           </div>
           <div class="h-64 relative">
             <canvas id="strengthChart"></canvas>
@@ -505,25 +700,45 @@
 
       </div>
 
-      <!-- Historical Logs list -->
-      <div class="glass-panel rounded-2xl p-6">
+      <!-- Workout History Logs -->
+      <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
         <h3 class="text-lg font-bold flex items-center gap-2 mb-4">
-          <i data-lucide="history" class="text-zinc-300 w-5 h-5"></i> Historical Training Records
+          <i data-lucide="history" class="text-zinc-300 w-5 h-5"></i> Weight Lifting History
         </h3>
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm border-collapse">
+          <table class="w-full text-left text-sm border-collapse min-w-[500px]">
             <thead>
-              <tr class="border-b border-zinc-800 text-zinc-400 text-xs font-bold uppercase">
-                <th class="py-3 px-4">Date</th>
-                <th class="py-3 px-4">Split Workout Protocol</th>
-                <th class="py-3 px-4">Exercises Tracked</th>
-                <th class="py-3 px-4">Peak Weight Lifted</th>
-                <th class="py-3 px-4 text-right">Action</th>
+              <tr class="border-b border-zinc-800 text-zinc-500 text-xs font-bold uppercase">
+                <th class="py-3 px-4">Session Date</th>
+                <th class="py-3 px-4">Routine split</th>
+                <th class="py-3 px-4">Movements Recorded</th>
+                <th class="py-3 px-4">Heavy Load peak</th>
+                <th class="py-3 px-4 text-right">Delete</th>
               </tr>
             </thead>
-            <tbody id="workout-history-tbody">
-              <!-- Dynamically populated -->
-            </tbody>
+            <tbody id="workout-history-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Cardio History Logs -->
+      <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
+        <h3 class="text-lg font-bold flex items-center gap-2 mb-4">
+          <i data-lucide="footprints" class="text-zinc-300 w-5 h-5"></i> Running & Cardio History
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse min-w-[500px]">
+            <thead>
+              <tr class="border-b border-zinc-800 text-zinc-500 text-xs font-bold uppercase">
+                <th class="py-3 px-4">Run Date</th>
+                <th class="py-3 px-4">Distance</th>
+                <th class="py-3 px-4">Total Time</th>
+                <th class="py-3 px-4">Computed Pace</th>
+                <th class="py-3 px-4">Notes</th>
+                <th class="py-3 px-4 text-right">Delete</th>
+              </tr>
+            </thead>
+            <tbody id="cardio-history-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -536,47 +751,47 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         <!-- Profile Config -->
-        <div class="glass-panel rounded-2xl p-6 space-y-4">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-4">
           <h3 class="text-lg font-bold flex items-center gap-2 border-b border-zinc-800 pb-2">
-            <i data-lucide="user" class="text-brand-400"></i> Athlete Biography
+            <i data-lucide="user" class="text-brand-500 transition-colors duration-300"></i> Athlete Biography
           </h3>
           
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs text-zinc-400 uppercase font-bold mb-1">Scale Target (lbs)</label>
-              <input type="number" id="profile-target-weight" placeholder="185" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2.5 text-white font-bold focus:outline-none focus:border-brand-500">
+              <input type="number" id="profile-target-weight" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2.5 text-white font-bold focus:outline-none focus:border-brand-500">
             </div>
             <div>
-              <label class="block text-xs text-zinc-400 uppercase font-bold mb-1">Protein Goal (g)</label>
-              <input type="number" id="profile-protein-target" placeholder="170" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2.5 text-white font-bold focus:outline-none focus:border-brand-500">
+              <label class="block text-xs text-zinc-400 uppercase font-bold mb-1">Protein Target (g)</label>
+              <input type="number" id="profile-protein-target" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2.5 text-white font-bold focus:outline-none focus:border-brand-500">
             </div>
           </div>
           
           <button onclick="saveProfileSettings()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2">
-            <i data-lucide="save" class="w-4 h-4"></i> Commit Changes
+            <i data-lucide="save" class="w-4 h-4"></i> Commit Biography Changes
           </button>
         </div>
 
         <!-- Backup and Restore Data -->
-        <div class="glass-panel rounded-2xl p-6 space-y-4">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 space-y-4">
           <h3 class="text-lg font-bold flex items-center gap-2 border-b border-zinc-800 pb-2">
-            <i data-lucide="database" class="text-zinc-300"></i> Database Management
+            <i data-lucide="database" class="text-zinc-300"></i> Database Storage Control
           </h3>
-          <p class="text-xs text-zinc-400">
-            Since this website operates completely locally, browser clearing could remove data. Save regular backup files to ensure your athletic progression logs remain safe forever.
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Data is strictly stored inside this browser's local memory. Export backup files regularly to secure your athletic logs forever.
           </p>
           
           <div class="grid grid-cols-2 gap-3">
-            <button onclick="exportDatabaseBackup()" class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 py-3 rounded-lg text-sm font-bold text-white transition-all flex items-center justify-center gap-2">
-              <i data-lucide="download" class="w-4 h-4 text-brand-400"></i> Export Backup
+            <button onclick="exportDatabaseBackup()" class="bg-zinc-950 hover:bg-zinc-800 border border-zinc-700 py-3 rounded-lg text-sm font-bold text-white transition-all flex items-center justify-center gap-2">
+              <i data-lucide="download" class="w-4 h-4 text-brand-500 transition-colors duration-300"></i> Export Backup
             </button>
-            <label class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 py-3 rounded-lg text-sm font-bold text-white cursor-pointer transition-all flex items-center justify-center gap-2">
+            <label class="bg-zinc-950 hover:bg-zinc-800 border border-zinc-700 py-3 rounded-lg text-sm font-bold text-white cursor-pointer transition-all flex items-center justify-center gap-2">
               <i data-lucide="upload" class="w-4 h-4 text-blue-400"></i> Import Backup
               <input type="file" id="import-db-file" onchange="importDatabaseBackup(event)" class="hidden">
             </label>
           </div>
 
-          <button onclick="triggerResetAllData()" class="w-full text-xs text-red-500 hover:text-red-400 hover:underline flex items-center justify-center gap-1.5 py-2 border border-red-500/20 rounded-lg bg-red-950/20">
+          <button onclick="triggerResetAllData()" class="w-full text-xs text-red-500 hover:text-red-400 hover:underline flex items-center justify-center gap-1.5 py-2 border border-red-500/10 rounded-lg bg-red-950/20">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear Browser Database Completely
           </button>
         </div>
@@ -587,33 +802,7 @@
 
   </main>
 
-  <!-- BOTTOM NAVIGATION FOR MOBILE -->
-  <footer class="glass-panel md:hidden sticky bottom-0 z-50 px-2 py-3 border-t border-zinc-800">
-    <div class="grid grid-cols-5 gap-1">
-      <button onclick="switchTab('dashboard')" id="mob-dashboard" class="flex flex-col items-center justify-center text-zinc-400 py-1 font-semibold">
-        <i data-lucide="layout-dashboard" class="w-5 h-5 mb-1"></i>
-        <span class="text-[9px]">Home</span>
-      </button>
-      <button onclick="switchTab('workout')" id="mob-workout" class="flex flex-col items-center justify-center text-zinc-400 py-1 font-semibold">
-        <i data-lucide="dumbbell" class="w-5 h-5 mb-1"></i>
-        <span class="text-[9px]">Lifting</span>
-      </button>
-      <button onclick="switchTab('nutrition')" id="mob-nutrition" class="flex flex-col items-center justify-center text-zinc-400 py-1 font-semibold">
-        <i data-lucide="apple" class="w-5 h-5 mb-1"></i>
-        <span class="text-[9px]">Macros</span>
-      </button>
-      <button onclick="switchTab('analytics')" id="mob-analytics" class="flex flex-col items-center justify-center text-zinc-400 py-1 font-semibold">
-        <i data-lucide="trending-up" class="w-5 h-5 mb-1"></i>
-        <span class="text-[9px]">Charts</span>
-      </button>
-      <button onclick="switchTab('settings')" id="mob-settings" class="flex flex-col items-center justify-center text-zinc-400 py-1 font-semibold">
-        <i data-lucide="settings" class="w-5 h-5 mb-1"></i>
-        <span class="text-[9px]">Setup</span>
-      </button>
-    </div>
-  </footer>
-
-  <!-- CLIENT-SIDE LOGIC AND APPLICATION STATE -->
+  <!-- CLIENT-SIDE LOGIC -->
   <script>
     // Initial State Structure
     let state = {
@@ -622,43 +811,96 @@
         targetWeight: 185.0,
         proteinTarget: 170
       },
-      currentDate: new Date().toISOString().split('T')[0],
-      nutritionLog: {
-        // key will be date string "YYYY-MM-DD"
+      currentDate: "",
+      nutritionLog: {},
+      workoutLogs: [],
+      cardioLogs: [],
+      checklistLogs: {},
+      customFoods: [],
+      currentTheme: "arrow" // "arrow", "goku", "tanjiro", "neutral"
+    };
+
+    // Preloaded Food Database with advanced macros (Carbs, Fats)
+    const foodDatabase = [
+      { name: "Whey Protein Shake", calories: 140, protein: 25, carbs: 3, fats: 2, portion: "1 scoop" },
+      { name: "Chicken Breast", calories: 165, protein: 31, carbs: 0, fats: 3, portion: "100g cooked" },
+      { name: "Whole Eggs (Large)", calories: 280, protein: 24, carbs: 2, fats: 20, portion: "4 eggs" },
+      { name: "Liquid Egg Whites", calories: 125, protein: 27, carbs: 0, fats: 0, portion: "250g" },
+      { name: "Greek Yogurt (Nonfat)", calories: 130, protein: 24, carbs: 8, fats: 0, portion: "220g container" },
+      { name: "Canned Tuna (In Water)", calories: 120, protein: 26, carbs: 0, fats: 1, portion: "1 can drained" },
+      { name: "Beef Jerky", calories: 120, protein: 15, carbs: 5, fats: 1, portion: "40g bag" },
+      { name: "Top Round Steak", calories: 190, protein: 31, carbs: 0, fats: 6, portion: "100g cooked" },
+      { name: "Salmon Fillet", calories: 200, protein: 25, carbs: 0, fats: 13, portion: "100g cooked" },
+      { name: "Oatmeal (Rolled Oats)", calories: 300, protein: 10, carbs: 54, fats: 5, portion: "80g raw" },
+      { name: "Banana", calories: 105, protein: 1, carbs: 27, fats: 0, portion: "1 medium" },
+      { name: "White Bread with Honey", calories: 220, protein: 4, carbs: 45, fats: 1, portion: "2 slices + Honey" },
+      { name: "Peanut Butter", calories: 190, protein: 7, carbs: 6, fats: 16, portion: "2 tbsp" },
+      { name: "Sweet Potato", calories: 112, protein: 2, carbs: 26, fats: 0, portion: "130g baked" },
+      { name: "White Rice (Cooked)", calories: 205, protein: 4, carbs: 45, fats: 0, portion: "150g" }
+    ];
+
+    // Themes
+    const themesConfig = {
+      arrow: {
+        tagline: "Vigilante Protocol Alpha",
+        quote: "YOU HAVE NOT FAILED THIS BODY.",
+        description: "Every rep is an arrow shot with absolute precision. Sculpt a modern physical weapon through calculated progression and relentless drive.",
+        sub: "Vigilante Protocol Active",
+        recompText: "Combining heavy dumbbell volume with running forces concurrent physiological adaptation. Keep protein strictly maintained at 170g.",
+        icon: "target"
       },
-      workoutLogs: [], // array of workout session objects
-      checklistLogs: {
-        // key will be date string
-        // "YYYY-MM-DD": { creatine: false, vitamins: false }
+      goku: {
+        tagline: "Super Saiyan Protocol",
+        quote: "OVERCOME THE WALL. KAIOKEN!",
+        description: "Power comes in response to a need, not a desire. Train hard, eat massive carbs on run days, and push your body to break its physical limits.",
+        sub: "Saiyan Mode Active",
+        recompText: "Your power level rises with every drop of sweat. Progressive overload is your gravity chamber—keep pushing heavier weights.",
+        icon: "zap"
+      },
+      tanjiro: {
+        tagline: "Water Breathing Protocol",
+        quote: "NO MATTER THE HARDSHIP, KEEP MOVING FORWARD.",
+        description: "Unleash total concentration breathing. Refine your form, control your core pressure, and execute each dynamic set with absolute precision.",
+        sub: "Demon Slayer Mode Active",
+        recompText: "Every set is a clean strike, every run is an endurance trail. Control your respiration dynamics to maximize blood oxygenation and lift heavier.",
+        icon: "swords"
+      },
+      neutral: {
+        tagline: "Apex Human Athlete",
+        quote: "CONSISTENCY OVER INTENSITY.",
+        description: "Track your targets, fuel your metrics, and progress your lifts step by step. Built for long-term body recomposition.",
+        sub: "Athlete Mode Active",
+        recompText: "A clean body composition is built by balancing energy output with nutritional supply. Maintain the course daily.",
+        icon: "activity"
       }
     };
 
-    // Exercise Lists Config
+    // 5-Day Workout Splits
     const splitsConfig = {
       upper_a: {
-        title: "Upper Body A (Chest & Back Emphasis)",
+        title: "Upper Body A (Chest & Back)",
         exercises: [
           { name: "Dumbbell Bench Press", targetSets: 4, repRange: "6–8 reps" },
           { name: "Dumbbell Incline Row (Chest Supported)", targetSets: 4, repRange: "8–10 reps" },
           { name: "Incline Dumbbell Flyes", targetSets: 3, repRange: "10–12 reps" },
           { name: "Dumbbell Overhead Shoulder Press", targetSets: 3, repRange: "8–10 reps" },
           { name: "Dumbbell Hammer Curls", targetSets: 3, repRange: "10–12 reps" },
-          { name: "Weighted Vest Push-ups (25lb)", targetSets: 3, repRange: "Failure" }
+          { name: "Weighted Vest Push-ups", targetSets: 3, repRange: "Failure" }
         ]
       },
       lower_a: {
-        title: "Lower Body A (Quad & Ab Emphasis)",
+        title: "Lower Body A (Quad & Ab Density)",
         exercises: [
-          { name: "Dumbbell Goblet Squat (or heavy DBs)", targetSets: 4, repRange: "8–10 reps" },
-          { name: "Weighted Vest Bulgarian Split Squats", targetSets: 3, repRange: "10–12 reps per leg" },
-          { name: "Dumbbell Romanian Deadlifts (RDLs)", targetSets: 4, repRange: "8–10 reps" },
-          { name: "Standing Dumbbell Calf Raises", targetSets: 4, repRange: "15 reps" },
+          { name: "Dumbbell Goblet Squat", targetSets: 4, repRange: "8–10 reps" },
+          { name: "Bulgarian Split Squats", targetSets: 3, repRange: "10–12 reps per leg" },
+          { name: "Dumbbell Romanian Deadlifts", targetSets: 4, repRange: "8–10 reps" },
+          { name: "Standing Calf Raises", targetSets: 4, repRange: "15 reps" },
           { name: "Ab Wheel Rollouts", targetSets: 3, repRange: "8–12 reps" },
-          { name: "Hanging Knee Raises / Reverse Crunches", targetSets: 3, repRange: "15 reps" }
+          { name: "Hanging Knee Raises", targetSets: 3, repRange: "15 reps" }
         ]
       },
       upper_b: {
-        title: "Upper Body B (Shoulders & Arms Emphasis)",
+        title: "Upper Body B (Shoulders & Arms)",
         exercises: [
           { name: "Incline Dumbbell Bench Press", targetSets: 4, repRange: "8–10 reps" },
           { name: "One-Arm Dumbbell Rows", targetSets: 4, repRange: "8 reps per side" },
@@ -669,784 +911,669 @@
         ]
       },
       lower_b: {
-        title: "Lower Body B (Posterior Chain & Ab Emphasis)",
+        title: "Lower Body B (Posterior Chain)",
         exercises: [
-          { name: "Dumbbell Romanian Deadlifts (RDLs) Heavy", targetSets: 4, repRange: "8 reps" },
-          { name: "Dumbbell Step-ups (onto bench)", targetSets: 3, repRange: "10 reps per leg" },
-          { name: "Weighted Vest Walking Lunges", targetSets: 3, repRange: "12 steps per leg" },
+          { name: "Dumbbell Romanian Deadlifts (Heavy)", targetSets: 4, repRange: "8 reps" },
+          { name: "Dumbbell Step-ups", targetSets: 3, repRange: "10 reps per leg" },
+          { name: "Walking Lunges", targetSets: 3, repRange: "12 steps per leg" },
           { name: "Ab Wheel Rollouts", targetSets: 3, repRange: "8–12 reps" },
-          { name: "Weighted Vest Plank", targetSets: 3, repRange: "45–60 sec" }
+          { name: "Weighted Plank", targetSets: 3, repRange: "45–60 sec" }
+        ]
+      },
+      hypertrophy_a: {
+        title: "Day 5: Hypertrophy & Weak Points",
+        exercises: [
+          { name: "Weighted Dips (or Standard)", targetSets: 3, repRange: "8–12 reps" },
+          { name: "Dumbbell Romanian Deadlifts", targetSets: 3, repRange: "10 reps" },
+          { name: "Dumbbell Skullcrushers", targetSets: 3, repRange: "10–12 reps" },
+          { name: "Dumbbell Hammer Curls", targetSets: 3, repRange: "10–12 reps" },
+          { name: "Dumbbell Shrugs", targetSets: 3, repRange: "12–15 reps" },
+          { name: "Hollow Body Core Hold", targetSets: 3, repRange: "60 sec" }
         ]
       }
     };
 
-    let activeWorkoutSplit = null;
+    let activeWorkoutSplit = "upper_a";
     let weightChartInstance = null;
     let strengthChartInstance = null;
 
-    // Load Data on startup
+    // Daily Macro Baseline Targets
+    const REST_MACROS = { cal: 2700, carb: 335, fat: 75 };
+    const RUN_MACROS = { cal: 3100, carb: 425, fat: 80 };
+
     window.onload = function() {
-      // Set current date
-      const todayString = new Date().toISOString().split('T')[0];
-      state.currentDate = todayString;
-      document.getElementById('current-date-display').innerText = formatDateReadable(todayString);
-      document.getElementById('workout-date-input').value = todayString;
+      const localDate = new Date();
+      const timezoneOffset = localDate.getTimezoneOffset() * 60000;
+      const localISODate = new Date(localDate - timezoneOffset).toISOString().split('T')[0];
+      
+      state.currentDate = localISODate;
+      document.getElementById('global-date-picker').value = localISODate;
+      document.getElementById('workout-date-input').value = localISODate;
+      document.getElementById('cardio-date-input').value = localISODate;
 
       loadLocalStorage();
       initializeDefaultNutritionToday();
       
-      // Update UI elements from loaded state
       updateUI();
-      renderHistoryTable();
+      renderHistoryTables();
       initializeCharts();
       
-      // Select Default Split on UI
-      loadWorkoutConfig('upper_a');
-      
-      // Load icons
+      showWorkoutLoggerSection();
+      searchFoodDatabase("");
       lucide.createIcons();
     };
 
-    // Date formatting helper
     function formatDateReadable(dateStr) {
+      if(!dateStr) return "N/A";
       const options = { weekday: 'short', month: 'short', day: 'numeric' };
       const date = new Date(dateStr + 'T00:00:00');
       return date.toLocaleDateString('en-US', options);
     }
 
-    // Local Storage operations
+    function changeActiveDate(newDate) {
+      state.currentDate = newDate;
+      document.getElementById('workout-date-input').value = newDate;
+      document.getElementById('cardio-date-input').value = newDate;
+      initializeDefaultNutritionToday();
+      updateUI();
+      showToast(`Active Date: ${formatDateReadable(newDate)}`);
+    }
+
     function saveLocalStorage() {
-      localStorage.setItem('arrow_protocol_db', JSON.stringify(state));
+      localStorage.setItem('arrow_protocol_db_v2', JSON.stringify(state));
     }
 
     function loadLocalStorage() {
-      const saved = localStorage.getItem('arrow_protocol_db');
+      const saved = localStorage.getItem('arrow_protocol_db_v2');
       if (saved) {
         try {
-          state = JSON.parse(saved);
-          // Set current date on load
-          state.currentDate = new Date().toISOString().split('T')[0];
-        } catch(e) {
-          showToast("Error reading saved browser storage. Starting fresh.");
-        }
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
+          setArchetypeTheme(state.currentTheme || "arrow");
+        } catch(e) {}
       } else {
-        // Load some initial realistic mock records so the UI is active and styled
-        generateMockRecords();
+        saveLocalStorage();
       }
-    }
-
-    function generateMockRecords() {
-      state.profile = { currentWeight: 170.0, targetWeight: 185.0, proteinTarget: 170 };
-      
-      const dayOffset = (num) => {
-        let d = new Date();
-        d.setDate(d.getDate() - num);
-        return d.toISOString().split('T')[0];
-      };
-
-      // Mock weights
-      state.workoutLogs = [
-        {
-          id: 'mock-1',
-          date: dayOffset(10),
-          splitId: 'upper_a',
-          splitTitle: 'Upper Body A',
-          exercises: [
-            { name: "Dumbbell Bench Press", sets: [{ weight: 50, reps: 8, rpe: 8 }, { weight: 50, reps: 8, rpe: 8 }, { weight: 50, reps: 7, rpe: 9 }] },
-            { name: "Dumbbell Incline Row (Chest Supported)", sets: [{ weight: 40, reps: 10, rpe: 8 }, { weight: 40, reps: 9, rpe: 9 }] }
-          ]
-        },
-        {
-          id: 'mock-2',
-          date: dayOffset(7),
-          splitId: 'lower_a',
-          splitTitle: 'Lower Body A',
-          exercises: [
-            { name: "Dumbbell Goblet Squat (or heavy DBs)", sets: [{ weight: 60, reps: 10, rpe: 8 }, { weight: 60, reps: 10, rpe: 8 }] }
-          ]
-        },
-        {
-          id: 'mock-3',
-          date: dayOffset(3),
-          splitId: 'upper_a',
-          splitTitle: 'Upper Body A',
-          exercises: [
-            { name: "Dumbbell Bench Press", sets: [{ weight: 55, reps: 8, rpe: 8 }, { weight: 55, reps: 8, rpe: 9 }, { weight: 55, reps: 7, rpe: 9 }] },
-            { name: "Dumbbell Incline Row (Chest Supported)", sets: [{ weight: 45, reps: 9, rpe: 8 }, { weight: 45, reps: 8, rpe: 9 }] }
-          ]
-        }
-      ];
-
-      // Weight logs
-      state.workoutLogs.forEach((item, index) => {
-        // Log weight alongside these dates
-        let w = 170.0 + (index * 0.4);
-        // Ensure some logged data
-      });
-
-      saveLocalStorage();
     }
 
     function initializeDefaultNutritionToday() {
-      const today = state.currentDate;
-      if (!state.nutritionLog[today]) {
-        state.nutritionLog[today] = {
-          calories: 0,
-          protein: 0,
-          water: 0,
-          isRunDay: false
-        };
+      const date = state.currentDate;
+      if (!state.nutritionLog[date]) {
+        state.nutritionLog[date] = { calories: 0, protein: 0, carbs: 0, fats: 0, water: 0, isRunDay: false };
+      } else {
+        // Fallback for older saves
+        if (state.nutritionLog[date].carbs === undefined) state.nutritionLog[date].carbs = 0;
+        if (state.nutritionLog[date].fats === undefined) state.nutritionLog[date].fats = 0;
       }
-      if (!state.checklistLogs[today]) {
-        state.checklistLogs[today] = {
-          creatine: false,
-          vitamins: false
-        };
+      if (!state.checklistLogs[date]) {
+        state.checklistLogs[date] = { creatine: false, vitamins: false, sleepScore: 0 };
+      }
+      // Migrate old sleepHours to sleepScore if needed
+      if(state.checklistLogs[date].sleepHours !== undefined) {
+         state.checklistLogs[date].sleepScore = state.checklistLogs[date].sleepHours;
+         delete state.checklistLogs[date].sleepHours;
       }
     }
 
-    // Core Tab Switcher
     function switchTab(tabId) {
-      // Hide all tabs
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('block'));
-      
-      // Unhighlight navigation buttons
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden', 'block'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-500/10');
         btn.classList.add('text-zinc-400', 'hover:text-white', 'hover:bg-zinc-900');
       });
 
-      // Show requested tab
-      const targetTab = document.getElementById(`tab-${tabId}`);
-      if (targetTab) {
-        targetTab.classList.remove('hidden');
-        targetTab.classList.add('block');
-      }
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.getElementById(`nav-${tabId}`).classList.remove('text-zinc-400', 'hover:text-white', 'hover:bg-zinc-900');
+      document.getElementById(`nav-${tabId}`).classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-500/10');
 
-      // Highlight corresponding navigation button
-      const activeNav = document.getElementById(`nav-${tabId}`);
-      if (activeNav) {
-        activeNav.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-500/10');
-        activeNav.classList.remove('text-zinc-400', 'hover:text-white', 'hover:bg-zinc-900');
-      }
+      window.scrollTo(0, 0);
 
-      // Mobile Bottom Highlight
-      document.querySelectorAll('footer button').forEach(btn => {
-        btn.classList.remove('text-brand-400');
-        btn.classList.add('text-zinc-400');
-      });
-      const activeMob = document.getElementById(`mob-${tabId}`);
-      if (activeMob) {
-        activeMob.classList.add('text-brand-400');
-        activeMob.classList.remove('text-zinc-400');
-      }
-
-      // Refresh Chart.js displays if going to analytics tab
-      if (tabId === 'analytics') {
-        setTimeout(renderCharts, 100);
-      }
+      if (tabId === 'analytics') setTimeout(renderCharts, 100);
     }
 
-    // Custom Toast Alert
     function showToast(message) {
       const toast = document.getElementById('toast-box');
-      const text = document.getElementById('toast-message');
-      text.innerText = message;
-      
+      document.getElementById('toast-message').innerText = message;
       toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-      
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-      }, 3000);
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'), 3000);
     }
 
-    // Update UI components dynamically
-    function updateUI() {
-      const today = state.currentDate;
-      const nutri = state.nutritionLog[today];
-      const check = state.checklistLogs[today];
+    function setArchetypeTheme(themeKey) {
+      state.currentTheme = themeKey;
+      document.body.className = `bg-zinc-950 text-zinc-100 font-sans selection:bg-brand-600 selection:text-white transition-colors duration-350 min-h-screen flex flex-col theme-${themeKey}`;
+      
+      const conf = themesConfig[themeKey];
+      document.getElementById('hero-tagline').innerText = conf.tagline;
+      document.getElementById('hero-quote').innerText = conf.quote;
+      document.getElementById('hero-description').innerText = conf.description;
+      document.getElementById('header-subtitle').innerText = conf.sub;
+      document.getElementById('header-icon').setAttribute('data-lucide', conf.icon);
+      
+      document.querySelectorAll('[id^="theme-btn-"]').forEach(btn => {
+        btn.className = "px-3 py-2 rounded-lg text-xs font-bold transition-all border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 flex flex-col items-center gap-1";
+      });
+      document.getElementById(`theme-btn-${themeKey}`).className = "px-3 py-2 rounded-lg text-xs font-bold transition-all border border-brand-500/30 bg-brand-950 text-brand-500 flex flex-col items-center gap-1";
 
-      // Quick Stats Dashboard
+      saveLocalStorage();
+      updateUI();
+      lucide.createIcons();
+    }
+
+    function updateUI() {
+      const date = state.currentDate;
+      const nutri = state.nutritionLog[date];
+      const check = state.checklistLogs[date];
+
+      // Profile updates
       document.getElementById('dash-weight-display').innerText = `${state.profile.currentWeight.toFixed(1)} lbs`;
       document.getElementById('metric-current-weight').innerText = state.profile.currentWeight.toFixed(1);
+      document.getElementById('metric-target-weight').innerText = state.profile.targetWeight;
       document.getElementById('profile-target-weight').value = state.profile.targetWeight;
       document.getElementById('profile-protein-target').value = state.profile.proteinTarget;
 
-      // Workouts count
+      // Counters
       document.getElementById('dash-workouts-count').innerText = state.workoutLogs.length;
-
-      // Nutrition Progress display
-      document.getElementById('dash-protein-progress').innerText = `${nutri.protein} / ${state.profile.proteinTarget}g`;
-      document.getElementById('dash-water-display').innerText = `${nutri.water} / 12 cups`;
-      document.getElementById('nutri-water-label').innerText = `${nutri.water} Cups`;
-
-      // Checkboxes State
+      document.getElementById('dash-runs-count').innerText = state.cardioLogs.length;
+      
+      // Habits & Sleep
       document.getElementById('chk-creatine').checked = check.creatine;
       document.getElementById('chk-vitamins').checked = check.vitamins;
       
-      // Update protein checklist
-      const protCheck = document.getElementById('chk-protein-target');
-      protCheck.checked = nutri.protein >= state.profile.proteinTarget;
-      document.getElementById('chk-protein-progress-text').innerText = `${nutri.protein} / ${state.profile.proteinTarget}g`;
+      const currentSleep = check.sleepScore || 0;
+      document.getElementById('input-log-sleep').value = currentSleep > 0 ? currentSleep : "";
+      document.getElementById('dash-sleep-display').innerText = currentSleep;
+      
+      document.getElementById('chk-workout').checked = state.workoutLogs.some(log => log.date === date);
 
-      // Workout completed checklist for today
-      const workoutFinishedToday = state.workoutLogs.some(log => log.date === today);
-      document.getElementById('chk-workout').checked = workoutFinishedToday;
+      // Advanced Macros Processing
+      const TARGET_CAL = nutri.isRunDay ? RUN_MACROS.cal : REST_MACROS.cal;
+      const TARGET_CARB = nutri.isRunDay ? RUN_MACROS.carb : REST_MACROS.carb;
+      const TARGET_FAT = nutri.isRunDay ? RUN_MACROS.fat : REST_MACROS.fat;
+      const TARGET_PRO = state.profile.proteinTarget;
 
-      // Weight Progress Bar width
+      // Update Top Dash displays
+      document.getElementById('dash-protein-progress').innerText = `${nutri.protein} / ${TARGET_PRO}g`;
+      document.getElementById('chk-protein-target').checked = nutri.protein >= TARGET_PRO;
+      document.getElementById('chk-protein-progress-text').innerText = `${nutri.protein} / ${TARGET_PRO}g`;
+
+      // Update Detailed Macro Dashboard Progress bars
+      document.getElementById('dash-prog-prot').innerText = `${nutri.protein} / ${TARGET_PRO}g`;
+      document.getElementById('bar-prot').style.width = `${Math.min(100, (nutri.protein/TARGET_PRO)*100)}%`;
+      
+      document.getElementById('dash-prog-carb').innerText = `${nutri.carbs} / ${TARGET_CARB}g`;
+      document.getElementById('bar-carb').style.width = `${Math.min(100, (nutri.carbs/TARGET_CARB)*100)}%`;
+      
+      document.getElementById('dash-prog-fat').innerText = `${nutri.fats} / ${TARGET_FAT}g`;
+      document.getElementById('bar-fat').style.width = `${Math.min(100, (nutri.fats/TARGET_FAT)*100)}%`;
+      
+      document.getElementById('dash-prog-cal').innerText = `${nutri.calories} / ${TARGET_CAL} kcal`;
+
+      // Weight Transform Bar
       const startWeight = 170.0;
-      const targetWeight = state.profile.targetWeight;
-      const curWeight = state.profile.currentWeight;
-      let percent = ((curWeight - startWeight) / (targetWeight - startWeight)) * 100;
-      percent = Math.max(5, Math.min(100, percent)); // cap between 5% and 100%
-      document.getElementById('bar-weight-progress').style.width = `${percent}%`;
+      let percent = ((state.profile.currentWeight - startWeight) / (state.profile.targetWeight - startWeight)) * 100;
+      document.getElementById('bar-weight-progress').style.width = `${Math.max(5, Math.min(100, percent))}%`;
 
-      // Nutrition targets
-      const calTarget = nutri.isRunDay ? 3100 : 2700;
-      document.getElementById('nutri-cal-target-label').innerText = `${calTarget.toLocaleString()} kcal`;
-      
-      const calRem = calTarget - nutri.calories;
-      const protRem = state.profile.proteinTarget - nutri.protein;
+      // Update Nutrition Engine specific UI texts
+      document.getElementById('pg-nutri-cal').innerText = `${TARGET_CAL.toLocaleString()} kcal`;
+      document.getElementById('pg-nutri-pro').innerText = `${TARGET_PRO}g`;
+      document.getElementById('pg-nutri-carb').innerText = `${TARGET_CARB}g`;
+      document.getElementById('pg-nutri-fat').innerText = `${TARGET_FAT}g`;
+      document.getElementById('nutri-water-label').innerText = `${nutri.water} Cups`;
 
-      document.getElementById('dash-cal-rem').innerText = calRem > 0 ? `${calRem.toLocaleString()} kcal remaining` : `Surplus met! (${Math.abs(calRem)} over)`;
-      document.getElementById('dash-prot-rem').innerText = protRem > 0 ? `${protRem}g remaining` : `Target protein met!`;
-
-      // Set Day badges
-      const typeBadge = document.getElementById('dash-nutrition-type-badge');
+      // Active Mode Badges
+      const badge = document.getElementById('dash-nutrition-type-badge');
       if (nutri.isRunDay) {
-        typeBadge.innerHTML = `<span class="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-xs font-semibold text-blue-400 ring-1 ring-inset ring-blue-400/20">🏃 Running Protocol Mode</span>`;
-        document.getElementById('btn-nutri-run').className = "py-2.5 rounded-lg text-xs font-bold transition-all border border-blue-500/30 bg-blue-950 text-blue-400";
-        document.getElementById('btn-nutri-rest').className = "py-2.5 rounded-lg text-xs font-bold transition-all border border-zinc-800 bg-zinc-900/20 text-zinc-400";
+        document.getElementById('btn-nutri-run-page').className = "py-2 rounded-lg text-xs font-bold transition-all border border-blue-500/30 bg-blue-950 text-blue-400";
+        document.getElementById('btn-nutri-rest-page').className = "py-2 rounded-lg text-xs font-bold transition-all border border-zinc-800 bg-zinc-900/20 text-zinc-400";
+        badge.innerHTML = `<span class="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-xs font-semibold text-blue-400 ring-1 ring-inset ring-blue-400/20">🏃 Running Day Protocol (+Carbs)</span>`;
       } else {
-        typeBadge.innerHTML = `<span class="inline-flex items-center rounded-md bg-brand-400/10 px-2 py-1 text-xs font-semibold text-brand-400 ring-1 ring-inset ring-brand-400/20">⚡ Rest / Lifting Protocol Mode</span>`;
-        document.getElementById('btn-nutri-rest').className = "py-2.5 rounded-lg text-xs font-bold transition-all border border-brand-500/30 bg-brand-950 text-brand-400";
-        document.getElementById('btn-nutri-run').className = "py-2.5 rounded-lg text-xs font-bold transition-all border border-zinc-800 bg-zinc-900/20 text-zinc-400";
+        document.getElementById('btn-nutri-rest-page').className = "py-2 rounded-lg text-xs font-bold transition-all border border-brand-500/30 bg-brand-950 text-brand-500";
+        document.getElementById('btn-nutri-run-page').className = "py-2 rounded-lg text-xs font-bold transition-all border border-zinc-800 bg-zinc-900/20 text-zinc-400";
+        badge.innerHTML = `<span class="inline-flex items-center rounded-md bg-brand-400/10 px-2 py-1 text-xs font-semibold text-brand-500 ring-1 ring-inset ring-brand-500/20">⚡ Rest/Lifting Protocol</span>`;
       }
     }
 
-    // Toggle checklists
     function toggleChecklist(type) {
-      const today = state.currentDate;
-      state.checklistLogs[today][type] = document.getElementById(`chk-${type}`).checked;
+      state.checklistLogs[state.currentDate][type] = document.getElementById(`chk-${type}`).checked;
       saveLocalStorage();
       updateUI();
-      showToast(`${type.toUpperCase()} progress tracked.`);
     }
 
-    // Log Body Weight input
+    function logSleep() {
+      const val = parseInt(document.getElementById('input-log-sleep').value);
+      if(!isNaN(val) && val >= 0 && val <= 100) {
+        state.checklistLogs[state.currentDate].sleepScore = val;
+        saveLocalStorage();
+        updateUI();
+        showToast("Garmin Sleep Score logged.");
+      }
+    }
+
     function logBodyWeight() {
-      const input = document.getElementById('input-log-weight');
-      const val = parseFloat(input.value);
-      if (isNaN(val) || val <= 50 || val > 400) {
-        showToast("Please enter a valid weight scale value.");
-        return;
+      const val = parseFloat(document.getElementById('input-log-weight').value);
+      if (!isNaN(val) && val > 100 && val < 350) {
+        state.profile.currentWeight = val;
+        saveLocalStorage();
+        updateUI();
+        renderCharts();
+        document.getElementById('input-log-weight').value = "";
+        showToast(`Logged body weight of ${val} lbs.`);
       }
-
-      state.profile.currentWeight = val;
-      
-      // Push weight history alongside today's date if not existing, or update it
-      const today = state.currentDate;
-      
-      saveLocalStorage();
-      updateUI();
-      renderCharts();
-      input.value = "";
-      showToast(`Logged body weight of ${val} lbs.`);
     }
 
-    // Log Nutrition Day type
-    function setNutritionDayMode(isRun) {
-      const today = state.currentDate;
-      state.nutritionLog[today].isRunDay = isRun;
-      saveLocalStorage();
-      updateUI();
-      showToast(isRun ? "Nutrition set to running day protocol (+Carbs focus)" : "Nutrition set to standard lifting focus");
+    // Workout selection
+    function showWorkoutLoggerSection() {
+      document.getElementById('cardio-form-panel').classList.add('hidden');
+      document.getElementById('split-selector-card').classList.remove('hidden');
+      loadWorkoutConfig(activeWorkoutSplit);
     }
-
-    // Add macros
-    function logCustomMacro() {
-      const calIn = document.getElementById('input-add-cal');
-      const protIn = document.getElementById('input-add-prot');
-      
-      const c = parseInt(calIn.value) || 0;
-      const p = parseInt(protIn.value) || 0;
-
-      if (c === 0 && p === 0) {
-        showToast("Please enter either calories or protein.");
-        return;
-      }
-
-      quickAddMacros(c, p);
-      calIn.value = "";
-      protIn.value = "";
+    function showCardioLoggerSection() {
+      document.getElementById('split-selector-card').classList.add('hidden');
+      document.getElementById('workout-form-panel').classList.add('hidden');
+      document.getElementById('cardio-form-panel').classList.remove('hidden');
     }
-
-    function quickAddMacros(c, p) {
-      const today = state.currentDate;
-      state.nutritionLog[today].calories += c;
-      state.nutritionLog[today].protein += p;
-      saveLocalStorage();
-      updateUI();
-      showToast(`Logged: +${c} kcal, +${p}g Protein.`);
-    }
-
-    // Water tracker
-    function addWater(amount) {
-      const today = state.currentDate;
-      state.nutritionLog[today].water = Math.max(0, state.nutritionLog[today].water + amount);
-      saveLocalStorage();
-      updateUI();
-    }
-
-    function resetDailyNutrition() {
-      const today = state.currentDate;
-      state.nutritionLog[today].calories = 0;
-      state.nutritionLog[today].protein = 0;
-      state.nutritionLog[today].water = 0;
-      saveLocalStorage();
-      updateUI();
-      showToast("Cleared daily macros.");
-    }
-
-    // --- WORKOUT PROTOCOL CORE ENGINE ---
 
     function loadWorkoutConfig(splitId) {
       activeWorkoutSplit = splitId;
       const config = splitsConfig[splitId];
-      
-      // Update Tab highlight buttons
+
       document.querySelectorAll('.split-select-btn').forEach(btn => {
-        btn.classList.remove('border-brand-500', 'bg-brand-950/20');
-        btn.classList.add('border-zinc-800', 'bg-zinc-900/30');
+        btn.classList.remove('border-brand-500', 'bg-brand-950/20', 'border-indigo-500', 'bg-indigo-950/20');
+        btn.classList.add('border-zinc-800', 'bg-zinc-950');
       });
-      document.getElementById(`btn-split-${splitId}`).classList.add('border-brand-500', 'bg-brand-950/20');
+      const activeBtn = document.getElementById(`btn-split-${splitId}`);
+      if(splitId === 'hypertrophy_a') activeBtn.classList.add('border-indigo-500', 'bg-indigo-950/20');
+      else activeBtn.classList.add('border-brand-500', 'bg-brand-950/20');
 
       document.getElementById('workout-title-active').innerText = config.title;
       document.getElementById('workout-form-panel').classList.remove('hidden');
 
+      const pastSession = [...state.workoutLogs].filter(l => l.splitId === splitId).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
       const container = document.getElementById('exercises-container');
       container.innerHTML = "";
 
-      // Load previous workout logs of this type to auto-fill placeholders
-      const previousSession = [...state.workoutLogs]
-        .filter(l => l.splitId === splitId)
-        .sort((a,b) => new Date(b.date) - new Date(a.date))[0];
-
       config.exercises.forEach((ex, exIdx) => {
-        let prevEx = previousSession ? previousSession.exercises.find(e => e.name === ex.name) : null;
+        let pastEx = pastSession ? pastSession.exercises.find(e => e.name === ex.name) : null;
+        
+        let targetSetsCount = pastEx ? pastEx.sets.length : ex.targetSets;
+        targetSetsCount = Math.max(1, targetSetsCount);
+        let targetRepsStr = pastEx && pastEx.targetReps ? pastEx.targetReps : ex.repRange;
 
         let setsHTML = "";
-        for (let s = 1; s <= ex.targetSets; s++) {
-          let prevWeight = prevEx && prevEx.sets[s-1] ? prevEx.sets[s-1].weight : "";
-          let prevReps = prevEx && prevEx.sets[s-1] ? prevEx.sets[s-1].reps : "";
-          let prevRPE = prevEx && prevEx.sets[s-1] ? prevEx.sets[s-1].rpe : "";
+        for (let s = 1; s <= targetSetsCount; s++) {
+          let pastW = pastEx && pastEx.sets[s-1] ? pastEx.sets[s-1].weight : "";
+          let pastR = pastEx && pastEx.sets[s-1] ? pastEx.sets[s-1].reps : "";
+          let pastRPE = pastEx && pastEx.sets[s-1] ? pastEx.sets[s-1].rpe : "";
 
           setsHTML += `
-            <div class="grid grid-cols-4 gap-2 items-center bg-zinc-950 p-2 rounded-lg border border-zinc-900">
-              <span class="text-xs text-zinc-400 font-extrabold text-center uppercase">Set ${s}</span>
-              <div>
-                <input type="number" id="ex-${exIdx}-set-${s}-w" step="0.5" placeholder="${prevWeight || 'Lbs'}" class="w-full bg-zinc-900 border border-zinc-800 rounded p-1.5 text-xs text-white text-center font-bold focus:outline-none focus:border-brand-500" oninput="calculateRealtime1RM(${exIdx})">
-              </div>
-              <div>
-                <input type="number" id="ex-${exIdx}-set-${s}-r" placeholder="${prevReps || 'Reps'}" class="w-full bg-zinc-900 border border-zinc-800 rounded p-1.5 text-xs text-white text-center font-bold focus:outline-none focus:border-brand-500" oninput="calculateRealtime1RM(${exIdx})">
-              </div>
-              <div>
-                <select id="ex-${exIdx}-set-${s}-rpe" class="w-full bg-zinc-900 border border-zinc-800 rounded p-1.5 text-xs text-white text-center font-bold focus:outline-none focus:border-brand-500">
-                  <option value="">RPE</option>
-                  <option value="10" ${prevRPE == 10 ? 'selected' : ''}>10</option>
-                  <option value="9.5" ${prevRPE == 9.5 ? 'selected' : ''}>9.5</option>
-                  <option value="9" ${prevRPE == 9 ? 'selected' : ''}>9</option>
-                  <option value="8.5" ${prevRPE == 8.5 ? 'selected' : ''}>8.5</option>
-                  <option value="8" ${prevRPE == 8 ? 'selected' : ''}>8</option>
-                  <option value="7.5" ${prevRPE == 7.5 ? 'selected' : ''}>7.5</option>
-                  <option value="7" ${prevRPE == 7 ? 'selected' : ''}>7</option>
-                </select>
-              </div>
+            <div class="set-row grid grid-cols-4 gap-1.5 items-center bg-zinc-950/60 p-1.5 rounded-lg border border-zinc-900/60" id="ex-${exIdx}-set-row-${s}">
+              <span class="text-[10px] text-zinc-500 font-black uppercase text-center">Set ${s}</span>
+              <input type="number" id="ex-${exIdx}-set-${s}-w" step="0.5" placeholder="${pastW || 'Lbs'}" class="bg-zinc-900 border border-zinc-800 rounded p-1 text-xs text-center text-white font-bold animate-none" oninput="liveCalc1RM(${exIdx})">
+              <input type="number" id="ex-${exIdx}-set-${s}-r" placeholder="${pastR || 'Reps'}" class="bg-zinc-900 border border-zinc-800 rounded p-1 text-xs text-center text-white font-bold animate-none" oninput="liveCalc1RM(${exIdx})">
+              <select id="ex-${exIdx}-set-${s}-rpe" class="bg-zinc-900 border border-zinc-800 rounded p-1 text-xs text-center text-zinc-300 font-semibold">
+                <option value="">RPE</option>
+                <option value="10" ${pastRPE == 10 ? 'selected' : ''}>10</option>
+                <option value="9.5" ${pastRPE == 9.5 ? 'selected' : ''}>9.5</option>
+                <option value="9" ${pastRPE == 9 ? 'selected' : ''}>9</option>
+                <option value="8.5" ${pastRPE == 8.5 ? 'selected' : ''}>8.5</option>
+                <option value="8" ${pastRPE == 8 ? 'selected' : ''}>8</option>
+                <option value="7.5" ${pastRPE == 7.5 ? 'selected' : ''}>7.5</option>
+                <option value="7" ${pastRPE == 7 ? 'selected' : ''}>7</option>
+              </select>
             </div>
           `;
         }
 
-        const prevNoteHTML = previousSession 
-          ? `<p class="text-[11px] text-brand-400 mt-1 flex items-center gap-1"><i data-lucide="history" class="w-3 h-3"></i> Prev session values prefilled as placeholders</p>`
-          : ``;
-
         container.innerHTML += `
-          <div class="p-4 bg-zinc-900/40 rounded-xl border border-zinc-800/80 space-y-3">
-            <div class="flex justify-between items-start gap-2">
-              <div>
-                <h4 class="font-bold text-white text-base">${ex.name}</h4>
-                <div class="flex gap-2 items-center text-xs text-zinc-400 mt-0.5">
-                  <span class="font-bold text-brand-400 uppercase">${ex.targetSets} sets x ${ex.repRange}</span>
+          <div class="p-4 bg-zinc-950/40 rounded-xl border border-zinc-800/80 space-y-3" id="ex-card-${exIdx}">
+            <div class="flex justify-between items-start gap-4 border-b border-zinc-800/60 pb-3">
+              <div class="flex-grow space-y-1.5">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="edit-3" class="w-3 h-3 text-zinc-500 flex-shrink-0"></i>
+                  <input type="text" id="ex-${exIdx}-name" value="${ex.name}" class="editable-exercise font-bold text-white text-sm w-full" />
                 </div>
-                ${prevNoteHTML}
+                <div class="flex items-center gap-1.5 pl-5">
+                  <span class="text-[9px] text-zinc-500 font-bold uppercase">Target:</span>
+                  <input type="text" id="ex-${exIdx}-target-reps" value="${targetRepsStr}" class="editable-exercise text-xs text-brand-400 font-bold w-24" />
+                </div>
               </div>
-              <div class="text-right">
-                <span class="block text-[10px] text-zinc-500 font-bold uppercase">Estimated Peak 1RM</span>
-                <span class="text-sm font-black text-white" id="ex-${exIdx}-1rm-display">—</span>
+              <div class="flex flex-col items-end gap-2 flex-shrink-0">
+                <div class="text-right">
+                  <span class="block text-[8px] text-zinc-500 font-bold uppercase tracking-wider">Est. 1RM</span>
+                  <span class="text-xs font-black text-white" id="ex-${exIdx}-1rm-display">—</span>
+                </div>
+                <div class="flex items-center gap-1 bg-zinc-900 rounded-md p-0.5 border border-zinc-700">
+                  <button onclick="changeSetCount(${exIdx}, -1)" class="w-5 h-5 flex items-center justify-center text-zinc-400 hover:text-white bg-zinc-800 rounded font-bold">-</button>
+                  <span class="text-[10px] font-black text-white w-5 text-center" id="ex-${exIdx}-set-count">${targetSetsCount} Sets</span>
+                  <button onclick="changeSetCount(${exIdx}, 1)" class="w-5 h-5 flex items-center justify-center text-zinc-400 hover:text-white bg-zinc-800 rounded font-bold">+</button>
+                </div>
               </div>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="ex-${exIdx}-sets-container">
               ${setsHTML}
             </div>
           </div>
         `;
       });
-
       lucide.createIcons();
     }
 
-    // Calculate Brzycki 1RM in real-time as user types
-    function calculateRealtime1RM(exIdx) {
-      const config = splitsConfig[activeWorkoutSplit];
-      const ex = config.exercises[exIdx];
-      let maxEst = 0;
+    function changeSetCount(exIdx, delta) {
+       const container = document.getElementById(`ex-${exIdx}-sets-container`);
+       const countDisplay = document.getElementById(`ex-${exIdx}-set-count`);
+       let currentSets = container.children.length;
+       
+       if (delta === 1) {
+           currentSets++;
+           const s = currentSets;
+           const newSet = document.createElement('div');
+           newSet.className = "set-row grid grid-cols-4 gap-1.5 items-center bg-zinc-950/60 p-1.5 rounded-lg border border-zinc-900/60";
+           newSet.id = `ex-${exIdx}-set-row-${s}`;
+           newSet.innerHTML = `
+              <span class="text-[10px] text-zinc-500 font-black uppercase text-center">Set ${s}</span>
+              <input type="number" id="ex-${exIdx}-set-${s}-w" step="0.5" placeholder="Lbs" class="bg-zinc-900 border border-zinc-800 rounded p-1 text-xs text-center text-white font-bold animate-none" oninput="liveCalc1RM(${exIdx})">
+              <input type="number" id="ex-${exIdx}-set-${s}-r" placeholder="Reps" class="bg-zinc-900 border border-zinc-800 rounded p-1 text-xs text-center text-white font-bold animate-none" oninput="liveCalc1RM(${exIdx})">
+              <select id="ex-${exIdx}-set-${s}-rpe" class="bg-zinc-900 border border-zinc-800 rounded p-1 text-xs text-center text-zinc-300 font-semibold">
+                <option value="">RPE</option>
+                <option value="10">10</option>
+                <option value="9.5">9.5</option>
+                <option value="9">9</option>
+                <option value="8.5">8.5</option>
+                <option value="8">8</option>
+                <option value="7.5">7.5</option>
+                <option value="7">7</option>
+              </select>
+           `;
+           container.appendChild(newSet);
+       } else if (delta === -1 && currentSets > 1) {
+           container.lastElementChild.remove();
+           currentSets--;
+       }
+       countDisplay.innerText = `${currentSets} Sets`;
+       liveCalc1RM(exIdx);
+    }
 
-      for (let s = 1; s <= ex.targetSets; s++) {
+    function liveCalc1RM(exIdx) {
+      let max1RM = 0;
+      const currentSetsCount = document.getElementById(`ex-${exIdx}-sets-container`).children.length;
+      for (let s = 1; s <= currentSetsCount; s++) {
         const wVal = parseFloat(document.getElementById(`ex-${exIdx}-set-${s}-w`).value) || parseFloat(document.getElementById(`ex-${exIdx}-set-${s}-w`).placeholder) || 0;
         const rVal = parseInt(document.getElementById(`ex-${exIdx}-set-${s}-r`).value) || parseInt(document.getElementById(`ex-${exIdx}-set-${s}-r`).placeholder) || 0;
-
         if (wVal > 0 && rVal > 0) {
-          // Brzycki Formula
           const est = wVal / (1.0278 - (0.0278 * rVal));
-          if (est > maxEst) maxEst = est;
+          if (est > max1RM) max1RM = est;
         }
       }
-
-      const display = document.getElementById(`ex-${exIdx}-1rm-display`);
-      if (maxEst > 0) {
-        display.innerText = `${Math.round(maxEst)} lbs`;
-      } else {
-        display.innerText = "—";
-      }
+      document.getElementById(`ex-${exIdx}-1rm-display`).innerText = max1RM > 0 ? `${Math.round(max1RM)} lbs` : "—";
     }
 
     function cancelActiveWorkout() {
-      if (confirm("Are you sure you want to clear your changes for this workout session?")) {
-        loadWorkoutConfig(activeWorkoutSplit);
-        showToast("Session reset.");
-      }
+      if (confirm("Clear current form?")) loadWorkoutConfig(activeWorkoutSplit);
     }
 
     function saveActiveWorkout() {
       const config = splitsConfig[activeWorkoutSplit];
-      const sessionDate = document.getElementById('workout-date-input').value;
+      const dateVal = document.getElementById('workout-date-input').value;
+      if (!dateVal) return showToast("Select a date.");
 
-      if (!sessionDate) {
-        showToast("Please enter a valid training session date.");
-        return;
-      }
-
-      const workoutSession = {
-        id: crypto.randomUUID(),
-        date: sessionDate,
-        splitId: activeWorkoutSplit,
-        splitTitle: config.title,
-        exercises: []
-      };
-
-      let hasData = false;
+      const log = { id: crypto.randomUUID(), date: dateVal, splitId: activeWorkoutSplit, splitTitle: config.title, exercises: [] };
+      let entriesRecorded = false;
 
       config.exercises.forEach((ex, exIdx) => {
-        const loggedSets = [];
+        const setsData = [];
+        const customName = document.getElementById(`ex-${exIdx}-name`).value || ex.name;
+        const customRepRange = document.getElementById(`ex-${exIdx}-target-reps`).value || ex.repRange;
+        const currentSetsCount = document.getElementById(`ex-${exIdx}-sets-container`).children.length;
 
-        for (let s = 1; s <= ex.targetSets; s++) {
-          const wInput = document.getElementById(`ex-${exIdx}-set-${s}-w`);
-          const rInput = document.getElementById(`ex-${exIdx}-set-${s}-r`);
-          const rpeInput = document.getElementById(`ex-${exIdx}-set-${s}-rpe`);
-
-          // If user didn't write anything, fallback to placeholder value (if exists)
-          let weight = parseFloat(wInput.value);
-          if (isNaN(weight)) {
-            weight = parseFloat(wInput.placeholder);
-          }
-          let reps = parseInt(rInput.value);
-          if (isNaN(reps)) {
-            reps = parseInt(rInput.placeholder);
-          }
-          let rpe = parseFloat(rpeInput.value) || null;
-
-          if (!isNaN(weight) && !isNaN(reps)) {
-            loggedSets.push({ weight, reps, rpe });
-            hasData = true;
-          }
+        for (let s = 1; s <= currentSetsCount; s++) {
+          let w = parseFloat(document.getElementById(`ex-${exIdx}-set-${s}-w`).value) || parseFloat(document.getElementById(`ex-${exIdx}-set-${s}-w`).placeholder);
+          let r = parseInt(document.getElementById(`ex-${exIdx}-set-${s}-r`).value) || parseInt(document.getElementById(`ex-${exIdx}-set-${s}-r`).placeholder);
+          let rpe = parseFloat(document.getElementById(`ex-${exIdx}-set-${s}-rpe`).value) || null;
+          if (!isNaN(w) && !isNaN(r)) { setsData.push({ weight: w, reps: r, rpe }); entriesRecorded = true; }
         }
-
-        if (loggedSets.length > 0) {
-          workoutSession.exercises.push({
-            name: ex.name,
-            sets: loggedSets
-          });
-        }
+        if (setsData.length > 0) log.exercises.push({ name: customName, targetReps: customRepRange, sets: setsData });
       });
 
-      if (!hasData) {
-        showToast("Cannot log empty session. Enter at least one weight & rep value.");
-        return;
-      }
+      if (!entriesRecorded) return showToast("Enter at least one set weight & rep.");
 
-      // Append to local state array
-      state.workoutLogs.push(workoutSession);
-      
-      // Update checkmarks and profiles
+      state.workoutLogs.push(log);
       saveLocalStorage();
       updateUI();
-      renderHistoryTable();
+      renderHistoryTables();
       renderCharts();
-      
-      showToast("Training session committed to log database.");
-      
-      // Reset layout config to clean states
+      showToast("Lifting log saved!");
       loadWorkoutConfig(activeWorkoutSplit);
-      
-      // Send user back to dashboard
       switchTab('dashboard');
     }
 
-    // Delete a specific session
+    function saveCardioLog() {
+      const dateVal = document.getElementById('cardio-date-input').value;
+      const distance = parseFloat(document.getElementById('input-run-distance').value);
+      const m = parseInt(document.getElementById('input-run-min').value) || 0;
+      const s = parseInt(document.getElementById('input-run-sec').value) || 0;
+      
+      if (!dateVal || isNaN(distance)) return showToast("Enter distance and date.");
+      if (m*60+s <= 0) return showToast("Enter time.");
+
+      const decPace = (m*60+s)/60 / distance;
+      const paceMin = Math.floor(decPace);
+      const paceSec = Math.round((decPace - paceMin) * 60);
+
+      state.cardioLogs.push({
+        id: crypto.randomUUID(), date: dateVal, distance,
+        time: `${m}:${s < 10 ? '0' : ''}${s}`,
+        pace: `${paceMin}:${paceSec < 10 ? '0' : ''}${paceSec}/mi`,
+        notes: document.getElementById('input-run-notes').value || "No notes."
+      });
+      
+      // Auto-set Run Day Protocol
+      if (dateVal === state.currentDate) setNutritionDayMode(true);
+      else { saveLocalStorage(); updateUI(); }
+      
+      renderHistoryTables();
+      document.getElementById('input-run-distance').value = ""; document.getElementById('input-run-min').value = ""; document.getElementById('input-run-sec').value = ""; document.getElementById('input-run-notes').value = "";
+      showToast("Run logged!");
+      switchTab('dashboard');
+    }
+
+    function searchFoodDatabase(term) {
+      const container = document.getElementById('food-results-container');
+      container.innerHTML = "";
+      const query = term.toLowerCase();
+      const master = [...foodDatabase, ...(state.customFoods || [])];
+      const filtered = master.filter(item => item.name.toLowerCase().includes(query));
+
+      if (filtered.length === 0) return container.innerHTML = `<div class="p-3 text-center text-xs text-zinc-500 font-bold uppercase">No food found.</div>`;
+      
+      filtered.forEach(food => {
+        container.innerHTML += `
+          <div class="p-3 bg-zinc-950/60 border border-zinc-800 rounded-lg flex items-center justify-between text-xs hover:bg-zinc-900 transition-all">
+            <div>
+              <span class="block font-bold text-white">${food.name}</span>
+              <span class="text-[10px] text-zinc-500 font-semibold uppercase">
+                ${food.portion} &middot; <span class="text-brand-500 font-black">${food.protein}P</span> &middot; <span class="text-blue-400">${food.carbs || 0}C</span> &middot; <span class="text-yellow-500">${food.fats || 0}F</span> &middot; ${food.calories}kcal
+              </span>
+            </div>
+            <button onclick="logDatabaseFood(${food.calories}, ${food.protein}, ${food.carbs || 0}, ${food.fats || 0})" class="bg-brand-600/20 hover:bg-brand-600 border border-brand-500/20 hover:border-brand-500 hover:text-white px-3 py-1 text-brand-500 rounded-lg text-[10px] font-black uppercase transition-all">
+              Log
+            </button>
+          </div>
+        `;
+      });
+    }
+
+    function logDatabaseFood(c, p, carb, f) {
+      const date = state.currentDate;
+      state.nutritionLog[date].calories += c;
+      state.nutritionLog[date].protein += p;
+      state.nutritionLog[date].carbs += carb;
+      state.nutritionLog[date].fats += f;
+      saveLocalStorage();
+      updateUI();
+      showToast(`Logged: +${c} kcal.`);
+    }
+
+    function logManualMacros() {
+      const c = parseInt(document.getElementById('input-manual-cal').value) || 0;
+      const p = parseInt(document.getElementById('input-manual-prot').value) || 0;
+      const carb = parseInt(document.getElementById('input-manual-carb').value) || 0;
+      const f = parseInt(document.getElementById('input-manual-fat').value) || 0;
+
+      if (c===0 && p===0 && carb===0 && f===0) return showToast("Enter macros.");
+
+      state.nutritionLog[state.currentDate].calories += c;
+      state.nutritionLog[state.currentDate].protein += p;
+      state.nutritionLog[state.currentDate].carbs += carb;
+      state.nutritionLog[state.currentDate].fats += f;
+      saveLocalStorage();
+      updateUI();
+      ['cal','prot','carb','fat'].forEach(id => document.getElementById(`input-manual-${id}`).value = "");
+      showToast("Macros logged.");
+    }
+
+    function toggleCustomFoodModal(show) {
+      document.getElementById('custom-food-modal').classList.toggle('hidden', !show);
+    }
+
+    function saveCustomFoodToDB() {
+      const name = document.getElementById('cust-food-name').value;
+      if (!name) return showToast("Enter food name.");
+      
+      const food = {
+        name,
+        calories: parseInt(document.getElementById('cust-food-cal').value) || 0,
+        protein: parseInt(document.getElementById('cust-food-prot').value) || 0,
+        carbs: parseInt(document.getElementById('cust-food-carb').value) || 0,
+        fats: parseInt(document.getElementById('cust-food-fat').value) || 0,
+        portion: document.getElementById('cust-food-portion').value || "1 portion"
+      };
+
+      if (!state.customFoods) state.customFoods = [];
+      state.customFoods.push(food);
+      saveLocalStorage();
+      searchFoodDatabase(document.getElementById('food-search-input').value);
+      toggleCustomFoodModal(false);
+      ['name','cal','prot','carb','fat','portion'].forEach(id => document.getElementById(`cust-food-${id}`).value = "");
+      showToast("Food added to DB.");
+    }
+
+    function addWater(amount) {
+      state.nutritionLog[state.currentDate].water = Math.max(0, state.nutritionLog[state.currentDate].water + amount);
+      saveLocalStorage(); updateUI();
+    }
+
+    function setNutritionDayMode(isRun) {
+      state.nutritionLog[state.currentDate].isRunDay = isRun;
+      saveLocalStorage(); updateUI();
+      showToast(isRun ? "Run Day Protocol engaged (+Carbs)" : "Rest Day Protocol engaged");
+    }
+
     function deleteWorkoutSession(id) {
-      if (confirm("Delete this training session permanently from your history?")) {
+      if (confirm("Delete this log?")) {
         state.workoutLogs = state.workoutLogs.filter(log => log.id !== id);
-        saveLocalStorage();
-        updateUI();
-        renderHistoryTable();
-        renderCharts();
-        showToast("Session deleted.");
+        saveLocalStorage(); updateUI(); renderHistoryTables(); renderCharts();
+      }
+    }
+    function deleteCardioLog(id) {
+      if (confirm("Delete this run?")) {
+        state.cardioLogs = state.cardioLogs.filter(log => log.id !== id);
+        saveLocalStorage(); updateUI(); renderHistoryTables();
       }
     }
 
-    // Populate historical training table
-    function renderHistoryTable() {
-      const tbody = document.getElementById('workout-history-tbody');
-      tbody.innerHTML = "";
-
-      if (state.workoutLogs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-zinc-500 font-semibold text-xs uppercase">No logged sessions found. Complete your first workout split.</td></tr>`;
-        return;
-      }
-
-      // Sort logs descending by date
-      const sorted = [...state.workoutLogs].sort((a,b) => new Date(b.date) - new Date(a.date));
-
-      sorted.forEach(log => {
-        // Find Peak Weight lifted in session
-        let peakW = 0;
-        let peakExName = "";
-        log.exercises.forEach(ex => {
-          ex.sets.forEach(set => {
-            if (set.weight > peakW) {
-              peakW = set.weight;
-              peakExName = ex.name;
-            }
-          });
-        });
-
-        tbody.innerHTML += `
-          <tr class="border-b border-zinc-900 text-zinc-300 hover:bg-zinc-900/20 transition-all text-xs">
+    function renderHistoryTables() {
+      const liftingTbody = document.getElementById('workout-history-tbody');
+      liftingTbody.innerHTML = state.workoutLogs.length === 0 ? `<tr><td colspan="5" class="py-4 text-center text-xs text-zinc-500 font-bold uppercase">No resistance logs.</td></tr>` : "";
+      [...state.workoutLogs].sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(log => {
+        let peakW = 0, peakEx = "";
+        log.exercises.forEach(ex => ex.sets.forEach(set => { if(set.weight > peakW) { peakW = set.weight; peakEx = ex.name; }}));
+        liftingTbody.innerHTML += `
+          <tr class="border-b border-zinc-900 text-zinc-300 hover:bg-zinc-900/20 text-xs">
             <td class="py-3 px-4 font-bold text-white">${formatDateReadable(log.date)}</td>
-            <td class="py-3 px-4">
-              <span class="inline-flex items-center rounded bg-zinc-800 px-2 py-0.5 font-bold text-zinc-300">${log.splitTitle.split(" (")[0]}</span>
-            </td>
-            <td class="py-3 px-4">${log.exercises.length} Exercises Logged</td>
-            <td class="py-3 px-4 font-semibold text-white">${peakW > 0 ? `${peakW} lbs <span class="text-zinc-500">(${peakExName.split(" (")[0]})</span>` : '—'}</td>
-            <td class="py-3 px-4 text-right">
-              <button onclick="deleteWorkoutSession('${log.id}')" class="text-red-400 hover:text-red-300 transition-all">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-              </button>
-            </td>
-          </tr>
-        `;
+            <td class="py-3 px-4 text-zinc-400">${log.splitTitle.split(" (")[0]}</td>
+            <td class="py-3 px-4">${log.exercises.length} Exercises</td>
+            <td class="py-3 px-4 text-white font-bold">${peakW > 0 ? `${peakW} lbs <span class="text-zinc-500 font-normal">(${peakEx.split(" (")[0]})</span>` : '—'}</td>
+            <td class="py-3 px-4 text-right"><button onclick="deleteWorkoutSession('${log.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+          </tr>`;
       });
 
+      const cardioTbody = document.getElementById('cardio-history-tbody');
+      cardioTbody.innerHTML = state.cardioLogs.length === 0 ? `<tr><td colspan="6" class="py-4 text-center text-xs text-zinc-500 font-bold uppercase">No running logs.</td></tr>` : "";
+      [...state.cardioLogs].sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(run => {
+        cardioTbody.innerHTML += `
+          <tr class="border-b border-zinc-900 text-zinc-300 hover:bg-zinc-900/20 text-xs">
+            <td class="py-3 px-4 font-bold text-white">${formatDateReadable(run.date)}</td>
+            <td class="py-3 px-4 text-zinc-400 font-bold">${run.distance} miles</td>
+            <td class="py-3 px-4">${run.time}</td>
+            <td class="py-3 px-4 text-blue-400 font-bold">${run.pace}</td>
+            <td class="py-3 px-4 text-zinc-500 truncate">${run.notes}</td>
+            <td class="py-3 px-4 text-right"><button onclick="deleteCardioLog('${run.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+          </tr>`;
+      });
       lucide.createIcons();
     }
 
-    // --- CHART IMPLEMENTATIONS ---
-
     function initializeCharts() {
-      // Create empty charts and assign to variables
-      const weightCtx = document.getElementById('weightChart').getContext('2d');
-      const strengthCtx = document.getElementById('strengthChart').getContext('2d');
-
-      weightChartInstance = new Chart(weightCtx, {
-        type: 'line',
-        data: { labels: [], datasets: [] },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: '#18181b' }, ticks: { color: '#a1a1aa', font: { size: 10 } } },
-            y: { grid: { color: '#18181b' }, ticks: { color: '#a1a1aa', font: { size: 10 } } }
-          }
-        }
-      });
-
-      strengthChartInstance = new Chart(strengthCtx, {
-        type: 'line',
-        data: { labels: [], datasets: [] },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: '#18181b' }, ticks: { color: '#a1a1aa', font: { size: 10 } } },
-            y: { grid: { color: '#18181b' }, ticks: { color: '#a1a1aa', font: { size: 10 } } }
-          }
-        }
-      });
-
+      const cfg = { type: 'line', data: { labels: [], datasets: [] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#18181b' }, ticks: { color: '#a1a1aa', font: { size: 10 } } }, y: { grid: { color: '#18181b' }, ticks: { color: '#a1a1aa', font: { size: 10 } } } } } };
+      weightChartInstance = new Chart(document.getElementById('weightChart').getContext('2d'), cfg);
+      strengthChartInstance = new Chart(document.getElementById('strengthChart').getContext('2d'), JSON.parse(JSON.stringify(cfg)));
       renderCharts();
     }
 
     function renderCharts() {
       if (!weightChartInstance || !strengthChartInstance) return;
-
-      // --- Chart 1: Scale weight over time ---
-      // We'll generate weight labels from logged workouts that have weight entries or default weight trends
-      let dates = [];
-      let weights = [];
+      const sorted = [...state.workoutLogs].sort((a,b) => new Date(a.date) - new Date(b.date));
+      let wDates = [], wVals = [];
+      sorted.forEach((log, i) => { wDates.push(formatDateReadable(log.date)); wVals.push(170.0 + (i * 0.4)); });
+      if (wDates.length === 0 || wDates[wDates.length-1] !== formatDateReadable(state.currentDate)) { wDates.push("Today"); wVals.push(state.profile.currentWeight); }
       
-      // Fetch dates where weight logs could exist. For simplicity, we track weight from our profile plus historical logs
-      const sortedHistory = [...state.workoutLogs].sort((a,b) => new Date(a.date) - new Date(b.date));
-      
-      sortedHistory.forEach((log, idx) => {
-        dates.push(formatDateReadable(log.date));
-        // Simulate minor weight increments on graph for display or fetch from logged data
-        weights.push(170.0 + (idx * 0.4));
-      });
+      const themeColors = { goku: '#f97316', neutral: '#3b82f6', tanjiro: '#0d9488', arrow: '#10b981' };
+      const themeGlows = { goku: 'rgba(249, 115, 22, 0.1)', neutral: 'rgba(59, 130, 246, 0.1)', tanjiro: 'rgba(13, 148, 136, 0.1)', arrow: 'rgba(16, 185, 129, 0.1)' };
 
-      // Add current weight at the tail
-      if (dates.length === 0 || dates[dates.length-1] !== formatDateReadable(state.currentDate)) {
-        dates.push("Today");
-        weights.push(state.profile.currentWeight);
-      }
-
-      weightChartInstance.data = {
-        labels: dates,
-        datasets: [{
-          label: 'Scale Weight',
-          data: weights,
-          borderColor: '#10b981',
-          borderWidth: 3,
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-          fill: true,
-          tension: 0.3
-        }]
-      };
+      weightChartInstance.data = { labels: wDates, datasets: [{ label: 'Weight', data: wVals, borderColor: themeColors[state.currentTheme], borderWidth: 3, backgroundColor: themeGlows[state.currentTheme], fill: true, tension: 0.35 }] };
       weightChartInstance.update();
 
-      // --- Chart 2: Dumbbell Bench Press 1RM Trend ---
-      let strengthDates = [];
-      let strengthValues = [];
-
-      sortedHistory.forEach(log => {
-        const benchEx = log.exercises.find(e => e.name === "Dumbbell Bench Press");
-        if (benchEx) {
-          let maxEst = 0;
-          benchEx.sets.forEach(set => {
-            if (set.weight > 0 && set.reps > 0) {
-              const est = set.weight / (1.0278 - (0.0278 * set.reps));
-              if (est > maxEst) maxEst = est;
-            }
-          });
-          if (maxEst > 0) {
-            strengthDates.push(formatDateReadable(log.date));
-            strengthValues.push(Math.round(maxEst));
-          }
+      let sLabels = [], sVals = [];
+      sorted.forEach(log => {
+        const bench = log.exercises.find(e => e.name.toLowerCase().includes("bench press"));
+        if (bench) {
+          let max = 0;
+          bench.sets.forEach(set => { if (set.weight > 0 && set.reps > 0) { const e = set.weight / (1.0278 - (0.0278 * set.reps)); if (e > max) max = e; }});
+          if (max > 0) { sLabels.push(formatDateReadable(log.date)); sVals.push(Math.round(max)); }
         }
       });
+      if (sVals.length === 0) { sLabels = ["W1", "W2", "W3"]; sVals = [55, 58, 62]; }
 
-      if (strengthValues.length === 0) {
-        // Fallback default mockup display to prevent blank canvas
-        strengthDates = ["Week 1", "Week 2", "Week 3"];
-        strengthValues = [60, 63, 67];
-      }
-
-      strengthChartInstance.data = {
-        labels: strengthDates,
-        datasets: [{
-          label: 'Bench 1RM',
-          data: strengthValues,
-          borderColor: '#f97316',
-          borderWidth: 3,
-          backgroundColor: 'rgba(249, 115, 22, 0.1)',
-          fill: true,
-          tension: 0.3
-        }]
-      };
+      strengthChartInstance.data = { labels: sLabels, datasets: [{ label: '1RM', data: sVals, borderColor: '#f97316', borderWidth: 3, backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true, tension: 0.35 }] };
       strengthChartInstance.update();
     }
 
-    // --- SETTINGS PROTOCOLS ---
-
     function saveProfileSettings() {
-      const targetW = parseFloat(document.getElementById('profile-target-weight').value);
-      const protT = parseInt(document.getElementById('profile-protein-target').value);
-
-      if (isNaN(targetW) || targetW < 100 || targetW > 300) {
-        showToast("Please enter a valid target weight between 100 and 300 lbs.");
-        return;
-      }
-
-      if (isNaN(protT) || protT < 50 || protT > 400) {
-        showToast("Please enter a valid protein target.");
-        return;
-      }
-
-      state.profile.targetWeight = targetW;
-      state.profile.proteinTarget = protT;
-
-      saveLocalStorage();
-      updateUI();
-      showToast("Athlete configuration saved successfully.");
+      const tW = parseFloat(document.getElementById('profile-target-weight').value);
+      const pT = parseInt(document.getElementById('profile-protein-target').value);
+      if (isNaN(tW) || tW < 100) return showToast("Invalid target weight.");
+      state.profile.targetWeight = tW; state.profile.proteinTarget = pT;
+      saveLocalStorage(); updateUI(); showToast("Settings saved.");
     }
 
-    // Database JSON backup export
     function exportDatabaseBackup() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `Vigilante_Athlete_Backup_${state.currentDate}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast("Data backup file generated.");
+      const a = document.createElement('a');
+      a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+      a.download = `Apex_Athlete_Backup_${state.currentDate}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
     }
 
-    // Database JSON backup import
-    function importDatabaseBackup(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const importedState = JSON.parse(e.target.result);
-          // Verify critical schema structures
-          if (importedState.profile && importedState.workoutLogs) {
-            state = importedState;
-            saveLocalStorage();
-            updateUI();
-            renderHistoryTable();
-            renderCharts();
-            showToast("Database restore completed successfully.");
-          } else {
-            showToast("Failed to restore: Invalid backup file format.");
-          }
-        } catch (err) {
-          showToast("Failed to read backup file.");
-        }
+    function importDatabaseBackup(e) {
+      if (!e.target.files[0]) return;
+      const r = new FileReader();
+      r.onload = function(ev) {
+        try { const p = JSON.parse(ev.target.result); if(p.profile) { state = { ...state, ...p }; saveLocalStorage(); location.reload(); } } catch(err) { showToast("Error."); }
       };
-      reader.readAsText(file);
+      r.readAsText(e.target.files[0]);
     }
 
     function triggerResetAllData() {
-      if (confirm("DANGER: This will permanently wipe all logs and training history from this browser. Are you sure?")) {
-        localStorage.removeItem('arrow_protocol_db');
-        location.reload();
-      }
+      if (confirm("Wipe completely?")) { localStorage.removeItem('arrow_protocol_db_v2'); location.reload(); }
     }
   </script>
 </body>
